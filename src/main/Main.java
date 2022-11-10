@@ -70,6 +70,11 @@ public final class Main {
         ArrayNode output = objectMapper.createArrayNode();
 
         //TODO add here the entry point to your implementation
+        GameSet gameSet = new GameSet();
+        gameSet.startGame(inputData);
+        // System.out.println(gameSet.players[1].decks.get(1));
+        // System.out.println(inputData.getGames().get(0).getStartGame());
+        //System.out.println(inputData.getPlayerOneDecks());
 
         ObjectWriter objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
         objectWriter.writeValue(new File(filePath2), output);
