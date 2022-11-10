@@ -39,10 +39,9 @@ public class GameSet {
 
         /*this.firstPlayerHero = new Card(input.getPlayerOneHero());
         this.secondPlayerHero = new Card(input.getPlayerTwoHero());*/
-        Random random = new Random(shuffleSeed);
         this.players[0] = new Player(new Card(input.getPlayerOneHero()),
-                inputData.getPlayerOneDecks(), input.getPlayerOneDeckIdx(), random);
+                inputData.getPlayerOneDecks(), input.getPlayerOneDeckIdx(), shuffleSeed);
         this.players[1] = new Player(new Card(input.getPlayerTwoHero()),
-                inputData.getPlayerTwoDecks(), input.getPlayerTwoDeckIdx(), random);
+                inputData.getPlayerTwoDecks(), input.getPlayerTwoDeckIdx(), shuffleSeed);
     }
 }

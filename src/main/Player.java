@@ -14,7 +14,7 @@ public class Player {
     ArrayList<ArrayList<Card>> decks;
     int deckIndex;
 
-    public Player(Card hero, DecksInput decksInput, int deckIndex, Random random) {
+    public Player(Card hero, DecksInput decksInput, int deckIndex, int shuffleSeed) {
         this.hero = hero;
         this.decks = new ArrayList<>();
         this.nrCardsInDeck = decksInput.getNrCardsInDeck();
@@ -29,7 +29,7 @@ public class Player {
             }
             this.decks.add(deck);
         }
-
+        Random random = new Random(shuffleSeed);
         Collections.shuffle(decks.get(deckIndex), random);
     }
 }
