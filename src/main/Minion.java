@@ -13,14 +13,16 @@ public class Minion extends Card {
 
     public Minion(CardInput input, GameSet gameSet) {
         super(input, gameSet);
+        this.setProperties();
     }
 
     public void setProperties() {
-        // ArrayList<Card> deck = player.decks.get(player.deckIndex);
         String name = this.getName();
         switch (name) {
             case "Sentinel":
             case "Berserker":
+            case "The Cursed One":
+            case "Disciple":
                 row = "back";
                 isTank = false;
                 break;
@@ -32,17 +34,9 @@ public class Minion extends Card {
                 break;
 
             case "The Ripper":
-                row = "front";
-                ability = new Ability(this);
-                break;
-
             case "Miraj":
-                break;
-
-            case "The Cursed One":
-                break;
-
-            case "Disciple":
+                row = "front";
+                isTank = false;
                 break;
         }
     }

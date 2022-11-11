@@ -60,4 +60,25 @@ public class Card {
     public String getName() {
         return name;
     }
+
+    @Override
+    public String toString() {
+        return "CardInput{"
+                +  "mana="
+                + mana
+                +  ", attackDamage="
+                + attackDamage
+                + ", health="
+                + health
+                +  ", description='"
+                + description
+                + '\''
+                + ", colors="
+                + colors
+                + ", name='"
+                +  ""
+                + name
+                + '\''
+                + '}' + '\n';
+    }
 }

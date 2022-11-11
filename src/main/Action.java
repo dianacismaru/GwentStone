@@ -8,6 +8,8 @@ import fileio.Coordinates;
 
 import java.util.ArrayList;
 
+import static main.Helper.*;
+
 public class Action {
     private final String command;
     private int handIdx;
@@ -31,9 +33,65 @@ public class Action {
         this.y = actionsInput.getY();
     }
 
-    public void operateCommand(ObjectNode actionNode) {
-        if (command.startsWith("get"))
+    public int operateCommand(ObjectNode actionNode) {
+        switch (command) {
+            case "placeCard":
+                return placeCard(actionNode);
+            case "endPlayerTurn":
+                gameSet.changePlayerTurn();
+                return 0;
+            case "cardUsesAttack":
+                break;
+            case "cardUsesAbility":
+                break;
+            case "useAttackHero":
+                break;
+            case "useHeroAbility":
+                break;
+            case "useEnvironmentCard":
+                break;
+        }
+        return 0;
+    }
+
+    public int placeCard(ObjectNode actionNode) {
+        int activePlayerIndex = gameSet.playerTurn - 1;
+        Player player = gameSet.players[activePlayerIndex];
+        ArrayList<Card> cardsInHand = player.cardsInHand;
+        Card card = cardsInHand.get(handIdx);
+
+        String errorMessage = "";
+        boolean errorDetected = false;
+
+        if (isEnvironmentCard(card)) {
+            errorMessage = "Cannot place environment card on table.";
+            errorDetected = true;
+        } else if (card.getMana() > player.getMana()) {
+            errorMessage = "Not enough mana to place card on table.";
+            errorDetected = true;
+        }
+
+        ArrayList<Card> targetRow = getTargetRow((Minion) card, activePlayerIndex, player);
+
+        if (targetRow.size() == 5) {
+            errorMessage = "Cannot place card on the table since the row is full.";
+            errorDetected = true;
+        }
+
+        if (errorDetected) {
             actionNode.put("command", command);
+            actionNode.put("handIdx", handIdx);
+            actionNode.put("error", errorMessage);
+            return 1;
+        }
+
+        player.updateMana(card.getMana());
+        targetRow.add(cardsInHand.remove(handIdx));
+        return 0;
+    }
+
+    public void debugCommand(ObjectNode actionNode) {
+        actionNode.put("command", command);
 
         switch(command) {
             case "getCardsInHand":
@@ -68,9 +126,6 @@ public class Action {
 
             case "getFrozenCardsOnTable":
                 break;
-
-            case "cardUsesAttack":
-                break;
         }
     }
 
@@ -82,7 +137,7 @@ public class Action {
         ArrayNode outputArrayNode = objectMapper.createArrayNode();
 
         for (Card card: cardsInHand) {
-            outputArrayNode.add(Helper.createCardNode(card));
+            outputArrayNode.add(createCardNode(card));
         }
 
         actionNode.put("output", outputArrayNode);
@@ -97,7 +152,7 @@ public class Action {
         ArrayNode outputArrayNode = objectMapper.createArrayNode();
 
         for (Card card: deck) {
-            outputArrayNode.add(Helper.createCardNode(card));
+            outputArrayNode.add(createCardNode(card));
         }
 
         actionNode.put("output", outputArrayNode);
@@ -106,14 +161,14 @@ public class Action {
     private void getPlayerHero(ObjectNode actionNode) {
         actionNode.put("playerIdx", playerIdx);
         Card hero = gameSet.players[playerIdx - 1].hero;
-        actionNode.put("output", Helper.createHeroNode(hero));
+        actionNode.put("output", createHeroNode(hero));
     }
 
     private void getCardAtPosition(ObjectNode actionNode) {
         ArrayList<ArrayList<Card>> gameBoard = gameSet.gameBoard;
 
         if (!gameBoard.isEmpty() && !gameBoard.get(x).isEmpty()) {
-            actionNode.put("output", Helper.createCardNode(gameBoard.get(x).get(y)));
+            actionNode.put("output", createCardNode(gameBoard.get(x).get(y)));
         } else {
             actionNode.put("error", "No card at that position.");
         }
@@ -126,8 +181,8 @@ public class Action {
     }
 
     private void cardUsesAttack(ObjectNode actionNode) {
-        Card attacker = gameSet.getCardByCoordinates(cardAttacker);
-        Card opponent = gameSet.getCardByCoordinates(cardAttacked);
+       /* Card attacker = gameSet.getCardByCoordinates(cardAttacker);
+        Card opponent = gameSet.getCardByCoordinates(cardAttacked);*/
     }
 
     public String getCommand() {

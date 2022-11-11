@@ -77,11 +77,22 @@ public final class Main {
 
             for (Action action : gameSet.actions) {
                 ObjectNode actionNode = objectMapper.createObjectNode();
-                action.operateCommand(actionNode);
                 if (action.getCommand().startsWith("get")) {
+                    action.debugCommand(actionNode);
+                    output.add(actionNode);
+                } else if (action.operateCommand(actionNode) == 1) {
                     output.add(actionNode);
                 }
             }
+            /*System.out.println(gameSet.roundCount);
+            for (Player player: gameSet.players) {
+                System.out.println("\nplayer nou");
+                for (Card card : player.cardsInHand)
+                    System.out.println(card.getName());
+            }*/
+
+            /*System.out.println("jucator curent : " + gameSet.playerTurn);
+            System.out.println(gameSet.gameBoard);*/
         }
 
         ObjectWriter objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
