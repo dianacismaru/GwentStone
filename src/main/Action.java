@@ -1,8 +1,12 @@
 package main;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import fileio.ActionsInput;
 import fileio.Coordinates;
-import fileio.Input;
+
+import java.util.ArrayList;
 
 public class Action {
     private String command;
@@ -27,29 +31,26 @@ public class Action {
         this.y = actionsInput.getY();
     }
 
-    public void operateCommand() {
-        Player player;
+    public void operateCommand(ObjectNode actionNode) {
+        actionNode.put("command", command);
+
         switch(command) {
             case "getCardsInHand":
                 break;
 
             case "getPlayerDeck":
-                player = gameSet.players[playerIdx - 1];
-                System.out.println(player.decks.get(player.deckIndex));
-                // se afiseaza deck-ul playerului
+                getPlayerDeck(actionNode);
                 break;
 
             case "getCardsOnTable":
                 break;
 
             case "getPlayerTurn":
-                System.out.println(gameSet.playerTurn);
+                actionNode.put("output", gameSet.playerTurn);
                 break;
 
             case "getPlayerHero":
-                player = gameSet.players[playerIdx - 1];
-                System.out.println(player.hero);
-                // se afiseaza card-ul eroului
+                getPlayerHero(actionNode);
                 break;
 
             case "getCardAtPosition":
@@ -64,5 +65,26 @@ public class Action {
             case "getFrozenCardsOnTable":
                 break;
         }
+    }
+
+    private void getPlayerDeck(ObjectNode actionNode) {
+        actionNode.put("playerIdx", playerIdx);
+        Player player = gameSet.players[playerIdx - 1];
+        ArrayList<Card> deck = player.decks.get(player.deckIndex);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        ArrayNode outputArrayNode = objectMapper.createArrayNode();
+
+        for (Card card: deck) {
+            // ObjectNode cardNode = createCardNode(card);
+            outputArrayNode.add(Helper.createCardNode(card));
+        }
+        actionNode.put("output", outputArrayNode);
+    }
+
+    private void getPlayerHero(ObjectNode actionNode) {
+        actionNode.put("playerIdx", playerIdx);
+        Card hero = gameSet.players[playerIdx - 1].hero;
+        actionNode.put("output", Helper.createHeroNode(hero));
     }
 }

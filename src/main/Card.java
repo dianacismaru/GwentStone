@@ -39,6 +39,10 @@ public class Card {
         return health;
     }
 
+    public void setHealth(int health) {
+        this.health = health;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -49,26 +53,5 @@ public class Card {
 
     public String getName() {
         return name;
-    }
-
-    @Override
-    public String toString() {
-        return "CardInput{"
-                +  "mana="
-                + mana + '\n'
-                +  ", attackDamage="
-                + attackDamage + '\n'
-                + ", health="
-                + health + '\n'
-                +  ", description='"
-                + description + '\n'
-                + '\''
-                + ", colors="
-                + colors + '\n'
-                + ", name='"
-                +  ""
-                + name + '\n'
-                + '\''
-                + '}' + '\n';
     }
 }
