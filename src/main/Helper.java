@@ -6,11 +6,18 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import fileio.CardInput;
 
 public class Helper {
-    private Helper(){
+    private Helper() {
+    }
+
+    static int getPlayerBoardIndex(Player player, GameSet gameSet) {
+        if (gameSet.players[0].equals(player)) {
+            return 0;
+        }
+        return 1;
     }
 
     /**
-     * Checks if an input card can be an environment card
+     * Check if an input card can be an environment card
      * @param  card the card that will be checked
      * @return      true if the card has an environment card name, false otherwise
      */
@@ -20,7 +27,7 @@ public class Helper {
     }
 
     /**
-     * Creates an ObjectNode from a card
+     * Create an ObjectNode from a card
      * @param  card the card that will be parsed
      * @return      the newly-created ObjectNode
      */
@@ -30,7 +37,7 @@ public class Helper {
 
         cardNode.put("mana", card.getMana());
 
-        if (!(card instanceof EnvironmentCard)) {
+        if (!(card instanceof Environment)) {
             cardNode.put("attackDamage", card.getAttackDamage());
             cardNode.put("health", card.getHealth());
         }
@@ -46,7 +53,7 @@ public class Helper {
     }
 
     /**
-     * Creates an ObjectNode from a hero card
+     * Create an ObjectNode from a hero card
      * @param  hero the hero card that will be parsed
      * @return      the newly-created ObjectNode
      */

@@ -2,9 +2,9 @@ package main;
 
 import fileio.CardInput;
 
-public class EnvironmentCard extends Card {
-    public EnvironmentCard(CardInput input) {
-        super(input);
+public class Environment extends Card {
+    public Environment(CardInput input, GameSet gameSet) {
+        super(input, gameSet);
     }
 
     public void useAbility() {
@@ -22,6 +22,5 @@ public class EnvironmentCard extends Card {
                 // ceva
                 break;
         }
-
     }
 }

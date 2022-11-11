@@ -12,8 +12,9 @@ public class Card {
     private ArrayList<String> colors;
     private String name;
     boolean frozen;
+    GameSet gameSet;
 
-    public Card(CardInput input) {
+    public Card(CardInput input, GameSet gameSet) {
         this.mana = input.getMana();
         this.attackDamage = input.getAttackDamage();
         this.health = input.getHealth();
@@ -21,6 +22,7 @@ public class Card {
         this.colors = input.getColors();
         this.name = input.getName();
         this.frozen = false;
+        this.gameSet = gameSet;
     }
 
     public int getMana() {
@@ -41,6 +43,10 @@ public class Card {
 
     public void setHealth(int health) {
         this.health = health;
+    }
+
+    public void addHealth(int health) {
+        this.health += health;
     }
 
     public String getDescription() {

@@ -9,7 +9,7 @@ import fileio.Coordinates;
 import java.util.ArrayList;
 
 public class Action {
-    private String command;
+    private final String command;
     private int handIdx;
     private Coordinates cardAttacker;
     private Coordinates cardAttacked;
@@ -32,10 +32,12 @@ public class Action {
     }
 
     public void operateCommand(ObjectNode actionNode) {
-        actionNode.put("command", command);
+        if (command.startsWith("get"))
+            actionNode.put("command", command);
 
         switch(command) {
             case "getCardsInHand":
+                getCardsInHand(actionNode);
                 break;
 
             case "getPlayerDeck":
@@ -54,9 +56,11 @@ public class Action {
                 break;
 
             case "getCardAtPosition":
+                getCardAtPosition(actionNode);
                 break;
 
             case "getPlayerMana":
+                getPlayerMana(actionNode);
                 break;
 
             case "getEnvironmentCardsInHand":
@@ -64,7 +68,24 @@ public class Action {
 
             case "getFrozenCardsOnTable":
                 break;
+
+            case "cardUsesAttack":
+                break;
         }
+    }
+
+    private void getCardsInHand(ObjectNode actionNode) {
+        actionNode.put("playerIdx", playerIdx);
+        ArrayList<Card> cardsInHand = gameSet.players[playerIdx - 1].cardsInHand;
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        ArrayNode outputArrayNode = objectMapper.createArrayNode();
+
+        for (Card card: cardsInHand) {
+            outputArrayNode.add(Helper.createCardNode(card));
+        }
+
+        actionNode.put("output", outputArrayNode);
     }
 
     private void getPlayerDeck(ObjectNode actionNode) {
@@ -76,9 +97,9 @@ public class Action {
         ArrayNode outputArrayNode = objectMapper.createArrayNode();
 
         for (Card card: deck) {
-            // ObjectNode cardNode = createCardNode(card);
             outputArrayNode.add(Helper.createCardNode(card));
         }
+
         actionNode.put("output", outputArrayNode);
     }
 
@@ -86,5 +107,30 @@ public class Action {
         actionNode.put("playerIdx", playerIdx);
         Card hero = gameSet.players[playerIdx - 1].hero;
         actionNode.put("output", Helper.createHeroNode(hero));
+    }
+
+    private void getCardAtPosition(ObjectNode actionNode) {
+        ArrayList<ArrayList<Card>> gameBoard = gameSet.gameBoard;
+
+        if (!gameBoard.isEmpty() && !gameBoard.get(x).isEmpty()) {
+            actionNode.put("output", Helper.createCardNode(gameBoard.get(x).get(y)));
+        } else {
+            actionNode.put("error", "No card at that position.");
+        }
+    }
+
+    private void getPlayerMana(ObjectNode actionNode) {
+        actionNode.put("playerIdx", playerIdx);
+        int mana = gameSet.players[playerIdx - 1].getMana();
+        actionNode.put("output", mana);
+    }
+
+    private void cardUsesAttack(ObjectNode actionNode) {
+        Card attacker = gameSet.getCardByCoordinates(cardAttacker);
+        Card opponent = gameSet.getCardByCoordinates(cardAttacked);
+    }
+
+    public String getCommand() {
+        return command;
     }
 }

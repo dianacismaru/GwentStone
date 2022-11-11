@@ -78,7 +78,9 @@ public final class Main {
             for (Action action : gameSet.actions) {
                 ObjectNode actionNode = objectMapper.createObjectNode();
                 action.operateCommand(actionNode);
-                output.add(actionNode);
+                if (action.getCommand().startsWith("get")) {
+                    output.add(actionNode);
+                }
             }
         }
 

@@ -1,6 +1,7 @@
 package main;
 
 import fileio.ActionsInput;
+import fileio.Coordinates;
 import fileio.Input;
 import fileio.StartGameInput;
 
@@ -24,6 +25,10 @@ public class GameSet {
     public void startGame(Input inputData) {
         StartGameInput input = inputData.getGames().get(0).getStartGame();
 
+        for (int i = 0; i < 4; i++) {
+            gameBoard.add(new ArrayList<>(5));
+        }
+
         this.startingPlayer = input.getStartingPlayer();
         this.playerTurn = startingPlayer;
         this.shuffleSeed = input.getShuffleSeed();
@@ -34,15 +39,17 @@ public class GameSet {
             actions.add(action);
         }
 
-        this.players[0] = new Player(new Card(input.getPlayerOneHero()),
-                inputData.getPlayerOneDecks(), input.getPlayerOneDeckIdx(), shuffleSeed);
-        this.players[1] = new Player(new Card(input.getPlayerTwoHero()),
-                inputData.getPlayerTwoDecks(), input.getPlayerTwoDeckIdx(), shuffleSeed);
-
-        this.play();
+        this.players[0] = new Player(new Card(input.getPlayerOneHero(), this),
+                inputData.getPlayerOneDecks(), input.getPlayerOneDeckIdx(),
+                shuffleSeed, this);
+        this.players[1] = new Player(new Card(input.getPlayerTwoHero(), this),
+                inputData.getPlayerTwoDecks(), input.getPlayerTwoDeckIdx(),
+                shuffleSeed, this);
     }
 
-    public void play() {
-        // se contorizeaza rundele
+    public Card getCardByCoordinates(Coordinates coordinates) {
+        int x = coordinates.getX();
+        int y = coordinates.getY();
+        return gameBoard.get(x).get(y);
     }
 }
