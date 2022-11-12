@@ -11,19 +11,25 @@ public class Helper {
     private Helper() {
     }
 
+    /**
+     * Display an error in the json output
+     * @param action        the action that is currently running in the game
+     * @param errorMessage  the error message that will be displayed
+     * @param actionNode    the object node that will be placed in the json output
+     */
     static void manageError(Action action, String errorMessage, ObjectNode actionNode) {
         actionNode.put("command", action.getCommand());
         actionNode.put("handIdx", action.getHandIdx());
         actionNode.put("error", errorMessage);
     }
 
-    static int getPlayerBoardIndex(Player player, GameSet gameSet) {
-        if (gameSet.players[0].equals(player)) {
-            return 0;
-        }
-        return 1;
-    }
-
+    /**
+     * Get the target row in the board game for a Minion card
+     * @param minion        the Minion card that will be placed on the board
+     * @param playerIndex   the index of the player
+     * @param player        the reference to the owner of the card
+     * @return              the target row in which the minion will be placed
+     */
     static ArrayList<Card> getTargetRow(Minion minion, int playerIndex, Player player) {
         int rowIndex;
 

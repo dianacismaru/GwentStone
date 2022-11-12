@@ -71,7 +71,7 @@ public class Action {
         ArrayList<Card> targetRow = getTargetRow((Minion) card, activePlayerIndex, player);
 
         if (targetRow.size() == 5) {
-            manageError(this, "Cannot place card on the table since the row is full.", actionNode);
+            manageError(this, "Cannot place card on table since row is full.", actionNode);
             return 1;
         }
 
