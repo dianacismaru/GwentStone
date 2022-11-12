@@ -72,11 +72,11 @@
 }, {
   "command" : "getPlayerMana",
   "playerIdx" : 2,
-  "output" : 33
+  "output" : 9
 }, {
   "command" : "getPlayerMana",
   "playerIdx" : 1,
-  "output" : 31
+  "output" : 11
 }, {
   "command" : "getPlayerTurn",
   "output" : 2

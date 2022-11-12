@@ -11,6 +11,12 @@ public class Helper {
     private Helper() {
     }
 
+    static void manageError(Action action, String errorMessage, ObjectNode actionNode) {
+        actionNode.put("command", action.getCommand());
+        actionNode.put("handIdx", action.getHandIdx());
+        actionNode.put("error", errorMessage);
+    }
+
     static int getPlayerBoardIndex(Player player, GameSet gameSet) {
         if (gameSet.players[0].equals(player)) {
             return 0;

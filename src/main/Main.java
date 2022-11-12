@@ -75,7 +75,10 @@ public final class Main {
             GameSet gameSet = new GameSet();
             gameSet.startGame(inputData);
 
+            // int ct = 0;
             for (Action action : gameSet.actions) {
+                /*System.out.print("\nComanda " + ct++ + " : la inceput Suntem la runda nr ");
+                System.out.println(gameSet.roundCount);*/
                 ObjectNode actionNode = objectMapper.createObjectNode();
                 if (action.getCommand().startsWith("get")) {
                     action.debugCommand(actionNode);
@@ -83,7 +86,10 @@ public final class Main {
                 } else if (action.operateCommand(actionNode) == 1) {
                     output.add(actionNode);
                 }
+                /*System.out.print("la final Suntem la runda nr ");
+                System.out.println(gameSet.roundCount);*/
             }
+
             /*System.out.println(gameSet.roundCount);
             for (Player player: gameSet.players) {
                 System.out.println("\nplayer nou");

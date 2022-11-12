@@ -60,33 +60,26 @@ public class Action {
         ArrayList<Card> cardsInHand = player.cardsInHand;
         Card card = cardsInHand.get(handIdx);
 
-        String errorMessage = "";
-        boolean errorDetected = false;
-
         if (isEnvironmentCard(card)) {
-            errorMessage = "Cannot place environment card on table.";
-            errorDetected = true;
+            manageError(this, "Cannot place environment card on table.", actionNode);
+            return 1;
         } else if (card.getMana() > player.getMana()) {
-            errorMessage = "Not enough mana to place card on table.";
-            errorDetected = true;
+            manageError(this, "Not enough mana to place card on table.", actionNode);
+            return 1;
         }
 
         ArrayList<Card> targetRow = getTargetRow((Minion) card, activePlayerIndex, player);
 
         if (targetRow.size() == 5) {
-            errorMessage = "Cannot place card on the table since the row is full.";
-            errorDetected = true;
-        }
-
-        if (errorDetected) {
-            actionNode.put("command", command);
-            actionNode.put("handIdx", handIdx);
-            actionNode.put("error", errorMessage);
+            manageError(this, "Cannot place card on the table since the row is full.", actionNode);
             return 1;
         }
 
-        player.updateMana(card.getMana());
+        //System.out.println("jucatorul avea " + player.getMana() + " mana");
+        player.updateMana(-card.getMana());
         targetRow.add(cardsInHand.remove(handIdx));
+        //System.out.println("jucatorul mai are " + player.getMana() + " mana");
+
         return 0;
     }
 
@@ -187,5 +180,9 @@ public class Action {
 
     public String getCommand() {
         return command;
+    }
+
+    public int getHandIdx() {
+        return handIdx;
     }
 }

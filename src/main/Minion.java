@@ -19,25 +19,18 @@ public class Minion extends Card {
     public void setProperties() {
         String name = this.getName();
         switch (name) {
-            case "Sentinel":
-            case "Berserker":
-            case "The Cursed One":
-            case "Disciple":
+            case "Sentinel", "Berserker", "The Cursed One", "Disciple" -> {
                 row = "back";
                 isTank = false;
-                break;
-
-            case "Goliath":
-            case "Warden":
+            }
+            case "Goliath", "Warden" -> {
                 row = "front";
                 isTank = true;
-                break;
-
-            case "The Ripper":
-            case "Miraj":
+            }
+            case "The Ripper", "Miraj" -> {
                 row = "front";
                 isTank = false;
-                break;
+            }
         }
     }
     void attack(Card card) {
