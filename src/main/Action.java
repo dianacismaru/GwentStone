@@ -75,10 +75,8 @@ public class Action {
             return 1;
         }
 
-        //System.out.println("jucatorul avea " + player.getMana() + " mana");
         player.updateMana(-card.getMana());
         targetRow.add(cardsInHand.remove(handIdx));
-        //System.out.println("jucatorul mai are " + player.getMana() + " mana");
 
         return 0;
     }
@@ -96,6 +94,7 @@ public class Action {
                 break;
 
             case "getCardsOnTable":
+                getCardsOnTable(actionNode);
                 break;
 
             case "getPlayerTurn":
@@ -133,6 +132,21 @@ public class Action {
             outputArrayNode.add(createCardNode(card));
         }
 
+        actionNode.put("output", outputArrayNode);
+    }
+
+    private void getCardsOnTable(ObjectNode actionNode) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ArrayNode outputArrayNode = objectMapper.createArrayNode();
+
+        ArrayList<ArrayList<Card>> gameBoard = gameSet.gameBoard;
+        for (ArrayList<Card> row : gameBoard) {
+            ArrayNode rowArrayNode = objectMapper.createArrayNode();
+            for (Card card : row) {
+                rowArrayNode.add(createCardNode(card));
+            }
+            outputArrayNode.add(rowArrayNode);
+        }
         actionNode.put("output", outputArrayNode);
     }
 

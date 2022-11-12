@@ -3,8 +3,6 @@ package main;
 import fileio.CardInput;
 import fileio.Coordinates;
 
-import java.util.ArrayList;
-
 public class Minion extends Card {
     Coordinates coordinates;
     String row;

@@ -29,15 +29,15 @@ public class Helper {
 
         if (minion.row.equals("front")) {
             if (playerIndex == 0) {
-                rowIndex = 1;
-            } else {
                 rowIndex = 2;
+            } else {
+                rowIndex = 1;
             }
         } else {
             if (playerIndex == 0) {
-                rowIndex = 0;
-            } else {
                 rowIndex = 3;
+            } else {
+                rowIndex = 0;
             }
         }
         return player.gameSet.gameBoard.get(rowIndex);
