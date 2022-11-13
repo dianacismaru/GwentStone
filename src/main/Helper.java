@@ -27,7 +27,7 @@ public class Helper {
                 actionNode.put("handIdx", action.getHandIdx());
                 actionNode.put("affectedRow", action.getAffectedRow());
             }
-            case "cardUsesAttack" -> {
+            case "cardUsesAttack", "cardUsesAbility" -> {
                 ObjectMapper objectMapper = new ObjectMapper();
                 ObjectNode attackerNode = objectMapper.createObjectNode();
                 attackerNode.put("x", action.getCardAttacker().getX());

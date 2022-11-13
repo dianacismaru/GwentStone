@@ -47,10 +47,6 @@ public class Card {
         this.health = health;
     }
 
-    public void addHealth(int health) {
-        this.health += health;
-    }
-
     public String getDescription() {
         return description;
     }

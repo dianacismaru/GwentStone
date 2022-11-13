@@ -43,7 +43,7 @@ public class Action {
             case "cardUsesAttack":
                 return cardUsesAttack(actionNode);
             case "cardUsesAbility":
-                break;
+                return cardUsesAbility(actionNode);
             case "useAttackHero":
                 break;
             case "useHeroAbility":
@@ -138,6 +138,42 @@ public class Action {
             removeCardFromTable(gameSet, opponent);
         }
         attacker.setAttacked(true);
+        return 0;
+    }
+
+    private int cardUsesAbility(ObjectNode actionNode) {
+        Player attackerOwner = getCardOwner(cardAttacker, gameSet.players);
+        Player attackedOwner = getCardOwner(cardAttacked, gameSet.players);
+
+        Card attacker = gameSet.getCardByCoordinates(cardAttacker);
+        Card opponent = gameSet.getCardByCoordinates(cardAttacked);
+
+        if (attacker.hasAttacked()) {
+            return manageError(this, "Attacker card has already attacked this turn.", actionNode);
+        }
+
+        if (attacker.getName().equals("Disciple") && !attackerOwner.equals(attackedOwner)) {
+            return manageError(this, "Attacked card does not belong to the current player.", actionNode);
+        }
+
+        if (!attacker.getName().equals("Disciple") && attackerOwner.equals(attackedOwner)) {
+            return manageError(this, "Attacked card does not belong to the enemy.", actionNode);
+        }
+
+        if (enemyHasTank(attackedOwner, gameSet) && !((Minion) opponent).isTank()) {
+            return manageError(this, "Attacked card is not of type 'Tank'.", actionNode);
+        }
+
+        if (attacker.isFrozen()) {
+            return manageError(this, "Attacker card is frozen.", actionNode);
+        }
+
+        ((Minion) attacker).useAbility(attacker, opponent);
+        attacker.setAttacked(true);
+
+        if (opponent.getHealth() <= 0) {
+            removeCardFromTable(gameSet, opponent);
+        }
         return 0;
     }
 
