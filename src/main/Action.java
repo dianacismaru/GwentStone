@@ -81,8 +81,7 @@ public class Action {
     public int useEnvironmentCard(ObjectNode actionNode) {
         int activePlayerIndex = gameSet.playerTurn - 1;
         Player player = gameSet.players[activePlayerIndex];
-        ArrayList<Card> cardsInHand = player.cardsInHand;
-        Card card = cardsInHand.get(handIdx);
+        Card card = player.cardsInHand.get(handIdx);
 
         if (!isEnvironmentCard(card)) {
             return manageError(this, "Chosen card is not of type environment.", actionNode);
@@ -93,7 +92,7 @@ public class Action {
         }
 
         if (!isEnemyRow(affectedRow, activePlayerIndex)) {
-            return manageError(this, "Chosen row does not belong to the enemy", actionNode);
+            return manageError(this, "Chosen row does not belong to the enemy.", actionNode);
         }
 
         if (card.getName().equals("Heart Hound")) {
@@ -103,6 +102,7 @@ public class Action {
         }
         Environment environmentCard = (Environment) card;
         environmentCard.useAbility(affectedRow);
+        player.setMana(player.getMana() - environmentCard.getMana());
         player.cardsInHand.remove(environmentCard);
         return 0;
     }
@@ -144,6 +144,7 @@ public class Action {
                 break;
 
             case "getFrozenCardsOnTable":
+                getFrozenCardsOnTable(actionNode);
                 break;
         }
     }
@@ -177,6 +178,21 @@ public class Action {
         actionNode.put("output", outputArrayNode);
     }
 
+    private void getFrozenCardsOnTable(ObjectNode actionNode) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ArrayNode outputArrayNode = objectMapper.createArrayNode();
+
+        ArrayList<ArrayList<Card>> gameBoard = gameSet.gameBoard;
+        for (ArrayList<Card> row : gameBoard) {
+            for (Card card : row) {
+                if (card.getFrozen())
+                    outputArrayNode.add(createCardNode(card));
+            }
+        }
+        actionNode.put("output", outputArrayNode);
+    }
+
+
     private void getPlayerDeck(ObjectNode actionNode) {
         actionNode.put("playerIdx", playerIdx);
         Player player = gameSet.players[playerIdx - 1];
@@ -201,6 +217,9 @@ public class Action {
     private void getCardAtPosition(ObjectNode actionNode) {
         ArrayList<ArrayList<Card>> gameBoard = gameSet.gameBoard;
 
+        actionNode.put("x", x);
+        actionNode.put("y", y);
+
         if (!gameBoard.isEmpty() && !gameBoard.get(x).isEmpty()) {
             actionNode.put("output", createCardNode(gameBoard.get(x).get(y)));
         } else {
@@ -217,12 +236,11 @@ public class Action {
     private void getEnvironmentCardsInHand(ObjectNode actionNode) {
         actionNode.put("playerIdx", playerIdx);
         Player player = gameSet.players[playerIdx - 1];
-        ArrayList<Card> deck = player.decks.get(player.deckIndex);
 
         ObjectMapper objectMapper = new ObjectMapper();
         ArrayNode outputArrayNode = objectMapper.createArrayNode();
 
-        for (Card card: deck) {
+        for (Card card: player.cardsInHand) {
             if (isEnvironmentCard(card))
                 outputArrayNode.add(createCardNode(card));
         }

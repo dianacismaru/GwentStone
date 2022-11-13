@@ -1,9 +1,14 @@
 [ {
-  "command" : "getEnvironmentCardsInHand"
+  "command" : "getEnvironmentCardsInHand",
+  "playerIdx" : 2,
+  "output" : [ ]
 }, {
-  "command" : "getEnvironmentCardsInHand"
+  "command" : "getEnvironmentCardsInHand",
+  "playerIdx" : 1,
+  "output" : [ ]
 }, {
-  "command" : "getFrozenCardsOnTable"
+  "command" : "getFrozenCardsOnTable",
+  "output" : [ ]
 }, {
   "command" : "getPlayerTurn",
   "output" : 1
@@ -13,6 +18,8 @@
   "output" : 1
 }, {
   "command" : "getCardAtPosition",
+  "x" : 0,
+  "y" : 0,
   "output" : {
     "mana" : 2,
     "attackDamage" : 5,
@@ -22,29 +29,46 @@
     "name" : "Berserker"
   }
 }, {
-  "command" : "getEnvironmentCardsInHand"
+  "command" : "getEnvironmentCardsInHand",
+  "playerIdx" : 2,
+  "output" : [ ]
 }, {
   "command" : "getPlayerMana",
   "playerIdx" : 2,
   "output" : 1
 }, {
-  "command" : "getEnvironmentCardsInHand"
+  "command" : "getEnvironmentCardsInHand",
+  "playerIdx" : 1,
+  "output" : [ ]
 }, {
-  "command" : "getFrozenCardsOnTable"
+  "command" : "getFrozenCardsOnTable",
+  "output" : [ ]
 }, {
   "command" : "getPlayerTurn",
   "output" : 1
 }, {
-  "command" : "getEnvironmentCardsInHand"
+  "command" : "getEnvironmentCardsInHand",
+  "playerIdx" : 2,
+  "output" : [ {
+    "mana" : 1,
+    "description" : "Premium card: The fury of hell is upon us, please kill us.",
+    "colors" : [ "Blue", "Green", "White" ],
+    "name" : "Firestorm"
+  } ]
 }, {
-  "command" : "getFrozenCardsOnTable"
+  "command" : "getFrozenCardsOnTable",
+  "output" : [ ]
 }, {
   "command" : "getPlayerTurn",
   "output" : 2
 }, {
-  "command" : "getEnvironmentCardsInHand"
+  "command" : "getEnvironmentCardsInHand",
+  "playerIdx" : 1,
+  "output" : [ ]
 }, {
   "command" : "getCardAtPosition",
+  "x" : 0,
+  "y" : 0,
   "output" : {
     "mana" : 2,
     "attackDamage" : 5,
@@ -127,11 +151,16 @@
     "name" : "The Ripper"
   } ]
 }, {
-  "command" : "getEnvironmentCardsInHand"
+  "command" : "getEnvironmentCardsInHand",
+  "playerIdx" : 2,
+  "output" : [ ]
 }, {
-  "command" : "getEnvironmentCardsInHand"
+  "command" : "getEnvironmentCardsInHand",
+  "playerIdx" : 1,
+  "output" : [ ]
 }, {
-  "command" : "getFrozenCardsOnTable"
+  "command" : "getFrozenCardsOnTable",
+  "output" : [ ]
 }, {
   "command" : "getPlayerTurn",
   "output" : 1
@@ -141,6 +170,8 @@
   "output" : 1
 }, {
   "command" : "getCardAtPosition",
+  "x" : 0,
+  "y" : 0,
   "output" : {
     "mana" : 2,
     "attackDamage" : 5,
@@ -150,29 +181,46 @@
     "name" : "Berserker"
   }
 }, {
-  "command" : "getEnvironmentCardsInHand"
+  "command" : "getEnvironmentCardsInHand",
+  "playerIdx" : 2,
+  "output" : [ ]
 }, {
   "command" : "getPlayerMana",
   "playerIdx" : 2,
   "output" : 1
 }, {
-  "command" : "getEnvironmentCardsInHand"
+  "command" : "getEnvironmentCardsInHand",
+  "playerIdx" : 1,
+  "output" : [ ]
 }, {
-  "command" : "getFrozenCardsOnTable"
+  "command" : "getFrozenCardsOnTable",
+  "output" : [ ]
 }, {
   "command" : "getPlayerTurn",
   "output" : 1
 }, {
-  "command" : "getEnvironmentCardsInHand"
+  "command" : "getEnvironmentCardsInHand",
+  "playerIdx" : 2,
+  "output" : [ {
+    "mana" : 1,
+    "description" : "Premium card: The fury of hell is upon us, please kill us.",
+    "colors" : [ "Blue", "Green", "White" ],
+    "name" : "Firestorm"
+  } ]
 }, {
-  "command" : "getFrozenCardsOnTable"
+  "command" : "getFrozenCardsOnTable",
+  "output" : [ ]
 }, {
   "command" : "getPlayerTurn",
   "output" : 2
 }, {
-  "command" : "getEnvironmentCardsInHand"
+  "command" : "getEnvironmentCardsInHand",
+  "playerIdx" : 1,
+  "output" : [ ]
 }, {
   "command" : "getCardAtPosition",
+  "x" : 0,
+  "y" : 0,
   "output" : {
     "mana" : 2,
     "attackDamage" : 5,

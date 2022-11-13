@@ -23,14 +23,19 @@ public class Environment extends Card {
     private void useWinterfell(int affectedRow) {
         ArrayList<Card> affectedRowList = gameSet.gameBoard.get(affectedRow);
         for (Card card: affectedRowList) {
+            System.out.println("folosesc winterfell pe cartea " + card.getName() + " de pe randul " + affectedRow);
             card.setFrozen(true);
         }
     }
 
     private void useFirestorm(int affectedRow) {
-        ArrayList<Card> affectedRowList = gameSet.gameBoard.get(affectedRow);
-        for (Card card: affectedRowList) {
+        ArrayList<Card> cloneAffectedRow = new ArrayList<>(gameSet.gameBoard.get(affectedRow));
+        for (Card card: cloneAffectedRow) {
+            System.out.println("folosesc firestorm pe cartea " + card.getName() + " de pe randul " + affectedRow);
             card.setHealth(card.getHealth() - 1);
+            if (card.getHealth() <= 0) {
+                gameSet.gameBoard.get(affectedRow).remove(card);
+            }
         }
     }
 
