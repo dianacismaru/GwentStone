@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
+import static main.Helper.canBeEnvironmentCard;
+
 public class Player {
     Card hero;
     private final int nrCardsInDeck;
@@ -15,8 +17,8 @@ public class Player {
     ArrayList<Card> cardsInHand;
     int deckIndex;
     GameSet gameSet;
-    //final int boardIndex;
     private int mana;
+    boolean playedHisTurn;
 
     public Player(Card hero, DecksInput decksInput, int deckIndex, int shuffleSeed, GameSet gameSet) {
         this.hero = hero;
@@ -27,14 +29,14 @@ public class Player {
         this.cardsInHand = new ArrayList<>();
         this.deckIndex = deckIndex;
         this.gameSet = gameSet;
-        //this.boardIndex = Helper.getPlayerBoardIndex(this, gameSet);
         this.mana = 1;
+        this.playedHisTurn = false;
 
         for (int i = 0; i < nrDecks; i++) {
             ArrayList<Card> deck = new ArrayList<>();
             for (int j = 0; j < nrCardsInDeck; j++) {
                 CardInput cardInput = decksInput.getDecks().get(i).get(j);
-                if (Helper.canBeEnvironmentCard(cardInput)) {
+                if (canBeEnvironmentCard(cardInput)) {
                     deck.add(new Environment(cardInput, gameSet));
                 } else {
                     deck.add(new Minion(cardInput, gameSet));
@@ -49,5 +51,9 @@ public class Player {
 
     public int getMana() {
         return mana;
+    }
+
+    public void setMana(int mana) {
+        this.mana = mana;
     }
 }

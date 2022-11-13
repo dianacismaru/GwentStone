@@ -75,12 +75,25 @@ public final class Main {
             GameSet gameSet = new GameSet();
             gameSet.startGame(inputData);
 
+            int ct = 1;
             for (Action action : gameSet.actions) {
+                System.out.println("\nComanda nr. " + ct++ + " " + action.getCommand());
+                System.out.println("La inceput avem runda " + gameSet.roundCount);
+                System.out.println("Si este tura lui " + gameSet.playerTurn);
+
+                for (int i = 1; i <= 2; i++) {
+                    System.out.println("Player " + i + " are mana = " + gameSet.players[i-1].getMana());
+
+                }
                 ObjectNode actionNode = objectMapper.createObjectNode();
-                action.operateCommand(actionNode);
                 if (action.getCommand().startsWith("get")) {
+                    action.debugCommand(actionNode);
+                    output.add(actionNode);
+                } else if (action.operateCommand(actionNode) == 1) {
                     output.add(actionNode);
                 }
+                System.out.println("Urmeaza tura lui " + gameSet.playerTurn);
+                System.out.println("La final avem runda " + gameSet.roundCount);
             }
         }
 

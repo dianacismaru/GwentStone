@@ -3,8 +3,6 @@ package main;
 import fileio.CardInput;
 import fileio.Coordinates;
 
-import java.util.ArrayList;
-
 public class Minion extends Card {
     Coordinates coordinates;
     String row;
@@ -13,37 +11,24 @@ public class Minion extends Card {
 
     public Minion(CardInput input, GameSet gameSet) {
         super(input, gameSet);
+        this.setProperties();
     }
 
     public void setProperties() {
-        // ArrayList<Card> deck = player.decks.get(player.deckIndex);
         String name = this.getName();
         switch (name) {
-            case "Sentinel":
-            case "Berserker":
+            case "Sentinel", "Berserker", "The Cursed One", "Disciple" -> {
                 row = "back";
                 isTank = false;
-                break;
-
-            case "Goliath":
-            case "Warden":
+            }
+            case "Goliath", "Warden" -> {
                 row = "front";
                 isTank = true;
-                break;
-
-            case "The Ripper":
+            }
+            case "The Ripper", "Miraj" -> {
                 row = "front";
-                ability = new Ability(this);
-                break;
-
-            case "Miraj":
-                break;
-
-            case "The Cursed One":
-                break;
-
-            case "Disciple":
-                break;
+                isTank = false;
+            }
         }
     }
     void attack(Card card) {

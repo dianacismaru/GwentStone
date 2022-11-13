@@ -11,7 +11,7 @@ public class Card {
     private String description;
     private ArrayList<String> colors;
     private String name;
-    boolean frozen;
+    private boolean frozen;
     GameSet gameSet;
 
     public Card(CardInput input, GameSet gameSet) {
@@ -59,5 +59,34 @@ public class Card {
 
     public String getName() {
         return name;
+    }
+
+    public boolean getFrozen() {
+        return frozen;
+    }
+
+    public void setFrozen(boolean frozen) {
+        this.frozen = frozen;
+    }
+
+    @Override
+    public String toString() {
+        return "CardInput{"
+                +  "mana="
+                + mana
+                +  ", attackDamage="
+                + attackDamage
+                + ", health="
+                + health
+                +  ", description='"
+                + description
+                + '\''
+                + ", colors="
+                + colors
+                + ", name='"
+                +  ""
+                + name
+                + '\''
+                + '}' + '\n';
     }
 }
