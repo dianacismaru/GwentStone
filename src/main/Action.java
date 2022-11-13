@@ -49,7 +49,7 @@ public class Action {
             case "useHeroAbility":
                 break;
             case "useEnvironmentCard":
-                break;
+                return useEnvironmentCard(actionNode);
         }
         return 0;
     }
@@ -61,23 +61,49 @@ public class Action {
         Card card = cardsInHand.get(handIdx);
 
         if (isEnvironmentCard(card)) {
-            manageError(this, "Cannot place environment card on table.", actionNode);
-            return 1;
+            return manageError(this, "Cannot place environment card on table.", actionNode);
         } else if (card.getMana() > player.getMana()) {
-            manageError(this, "Not enough mana to place card on table.", actionNode);
-            return 1;
+            return manageError(this, "Not enough mana to place card on table.", actionNode);
         }
 
         ArrayList<Card> targetRow = getTargetRow((Minion) card, activePlayerIndex, player);
 
         if (targetRow.size() == 5) {
-            manageError(this, "Cannot place card on table since row is full.", actionNode);
-            return 1;
+            return manageError(this, "Cannot place card on table since row is full.", actionNode);
         }
 
-        player.updateMana(-card.getMana());
+        player.setMana(player.getMana() - card.getMana());
         targetRow.add(cardsInHand.remove(handIdx));
 
+        return 0;
+    }
+
+    public int useEnvironmentCard(ObjectNode actionNode) {
+        int activePlayerIndex = gameSet.playerTurn - 1;
+        Player player = gameSet.players[activePlayerIndex];
+        ArrayList<Card> cardsInHand = player.cardsInHand;
+        Card card = cardsInHand.get(handIdx);
+
+        if (!isEnvironmentCard(card)) {
+            return manageError(this, "Chosen card is not of type environment.", actionNode);
+        }
+
+        if (player.getMana() < card.getMana()) {
+            return manageError(this, "Not enough mana to use environment card.", actionNode);
+        }
+
+        if (!isEnemyRow(affectedRow, activePlayerIndex)) {
+            return manageError(this, "Chosen row does not belong to the enemy", actionNode);
+        }
+
+        if (card.getName().equals("Heart Hound")) {
+            if (getMirroredRow(affectedRow, gameSet).size() == 5) {
+                return manageError(this, "Cannot steal enemy card since the player's row is full.", actionNode);
+            }
+        }
+        Environment environmentCard = (Environment) card;
+        environmentCard.useAbility(affectedRow);
+        player.cardsInHand.remove(environmentCard);
         return 0;
     }
 
@@ -114,6 +140,7 @@ public class Action {
                 break;
 
             case "getEnvironmentCardsInHand":
+                getEnvironmentCardsInHand(actionNode);
                 break;
 
             case "getFrozenCardsOnTable":
@@ -187,6 +214,22 @@ public class Action {
         actionNode.put("output", mana);
     }
 
+    private void getEnvironmentCardsInHand(ObjectNode actionNode) {
+        actionNode.put("playerIdx", playerIdx);
+        Player player = gameSet.players[playerIdx - 1];
+        ArrayList<Card> deck = player.decks.get(player.deckIndex);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        ArrayNode outputArrayNode = objectMapper.createArrayNode();
+
+        for (Card card: deck) {
+            if (isEnvironmentCard(card))
+                outputArrayNode.add(createCardNode(card));
+        }
+
+        actionNode.put("output", outputArrayNode);
+    }
+
     private void cardUsesAttack(ObjectNode actionNode) {
        /* Card attacker = gameSet.getCardByCoordinates(cardAttacker);
         Card opponent = gameSet.getCardByCoordinates(cardAttacked);*/
@@ -198,5 +241,9 @@ public class Action {
 
     public int getHandIdx() {
         return handIdx;
+    }
+
+    public int getAffectedRow() {
+        return affectedRow;
     }
 }

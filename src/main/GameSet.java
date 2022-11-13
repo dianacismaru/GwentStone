@@ -64,7 +64,7 @@ public class GameSet {
                 roundCount++;
 
             for (Player player: players) {
-                player.updateMana(roundCount);
+                player.setMana(player.getMana() + roundCount);
                 player.playedHisTurn = false;
                 Card firstDeckCard = player.decks.get(player.deckIndex).get(0);
                 player.decks.get(player.deckIndex).remove(0);

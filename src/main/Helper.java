@@ -17,10 +17,44 @@ public class Helper {
      * @param errorMessage  the error message that will be displayed
      * @param actionNode    the object node that will be placed in the json output
      */
-    static void manageError(Action action, String errorMessage, ObjectNode actionNode) {
+    static int manageError(Action action, String errorMessage, ObjectNode actionNode) {
         actionNode.put("command", action.getCommand());
         actionNode.put("handIdx", action.getHandIdx());
+
+        if (action.getCommand().equals("useEnvironmentCard")) {
+            actionNode.put("affectedRow", action.getAffectedRow());
+        }
+
         actionNode.put("error", errorMessage);
+        return 1;
+    }
+
+    public static Card getCardWithMaxHealth(ArrayList<Card> cardsList) {
+        Card cardWithMaxHealth = cardsList.get(0);
+
+        for (Card card: cardsList) {
+            if (card.getHealth() > cardWithMaxHealth.getHealth()) {
+                cardWithMaxHealth = card;
+            }
+        }
+        return cardWithMaxHealth;
+    }
+
+    public static ArrayList<Card> getMirroredRow(int affectedRow, GameSet gameSet) {
+        int targetRow = switch (affectedRow) {
+            case 0 -> 3;
+            case 1 -> 2;
+            case 2 -> 1;
+            default -> 0;
+        };
+        return gameSet.gameBoard.get(targetRow);
+    }
+
+    public static boolean isEnemyRow(int affectedRow, int activePlayerIndex) {
+        if (activePlayerIndex == 0 && (affectedRow == 0 || affectedRow == 1)) {
+            return true;
+        }
+        return activePlayerIndex == 1 && (affectedRow == 2 || affectedRow == 3);
     }
 
     /**

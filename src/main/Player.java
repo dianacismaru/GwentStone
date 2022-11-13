@@ -53,7 +53,7 @@ public class Player {
         return mana;
     }
 
-    public void updateMana(int mana) {
-        this.mana += mana;
+    public void setMana(int mana) {
+        this.mana = mana;
     }
 }
