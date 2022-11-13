@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fileio.CardInput;
+import fileio.Coordinates;
 
 import java.util.ArrayList;
 
@@ -17,16 +18,57 @@ public class Helper {
      * @param errorMessage  the error message that will be displayed
      * @param actionNode    the object node that will be placed in the json output
      */
-    static int manageError(Action action, String errorMessage, ObjectNode actionNode) {
+    public static int manageError(Action action, String errorMessage, ObjectNode actionNode) {
         actionNode.put("command", action.getCommand());
-        actionNode.put("handIdx", action.getHandIdx());
 
-        if (action.getCommand().equals("useEnvironmentCard")) {
-            actionNode.put("affectedRow", action.getAffectedRow());
+        switch (action.getCommand()) {
+            case "placeCard" -> actionNode.put("handIdx", action.getHandIdx());
+            case "useEnvironmentCard" -> {
+                actionNode.put("handIdx", action.getHandIdx());
+                actionNode.put("affectedRow", action.getAffectedRow());
+            }
+            case "cardUsesAttack" -> {
+                ObjectMapper objectMapper = new ObjectMapper();
+                ObjectNode attackerNode = objectMapper.createObjectNode();
+                attackerNode.put("x", action.getCardAttacker().getX());
+                attackerNode.put("y", action.getCardAttacker().getY());
+                actionNode.put("cardAttacker", attackerNode);
+                ObjectNode attackedNode = objectMapper.createObjectNode();
+                attackedNode.put("x", action.getCardAttacked().getX());
+                attackedNode.put("y", action.getCardAttacked().getY());
+                actionNode.put("cardAttacked", attackedNode);
+            }
         }
 
         actionNode.put("error", errorMessage);
         return 1;
+    }
+
+    public static void removeCardFromTable(GameSet gameSet, Card deadCard) {
+        for (ArrayList<Card> row: gameSet.gameBoard) {
+            for (Card card: row) {
+                if (card.equals(deadCard)) {
+                    row.remove(card);
+                    return;
+                }
+            }
+        }
+    }
+
+    public static boolean enemyHasTank(Player enemy, GameSet gameSet) {
+        int frontRow;
+        if (enemy.equals(gameSet.players[0])) {
+            frontRow = 2;
+        } else {
+            frontRow = 1;
+        }
+
+        for (Card card: gameSet.gameBoard.get(frontRow)) {
+            if (((Minion) card).isTank()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static Card getCardWithMaxHealth(ArrayList<Card> cardsList) {
@@ -48,6 +90,12 @@ public class Helper {
             default -> 0;
         };
         return gameSet.gameBoard.get(targetRow);
+    }
+
+    public static Player getCardOwner(Coordinates coordinates, Player[] players) {
+        if (coordinates.getX() == 0 || coordinates.getX() == 1)
+            return players[1];
+        return players[0];
     }
 
     public static boolean isEnemyRow(int affectedRow, int activePlayerIndex) {

@@ -8,7 +8,7 @@ public class Ability {
     }
 
     void useAbility(Card opponent) {
-        if (attacker.getFrozen()) {
+        if (attacker.isFrozen()) {
             System.out.println("Attacker card is frozen.");
         } else {
             switch (attacker.getName()) {

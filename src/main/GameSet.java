@@ -59,6 +59,7 @@ public class GameSet {
         }
 
         // check if the other player has also played his turn
+        // start a new round
         if (players[playerTurn - 1].playedHisTurn) {
             if (roundCount < 10)
                 roundCount++;
@@ -69,6 +70,12 @@ public class GameSet {
                 Card firstDeckCard = player.decks.get(player.deckIndex).get(0);
                 player.decks.get(player.deckIndex).remove(0);
                 player.cardsInHand.add(firstDeckCard);
+            }
+
+            for (ArrayList<Card> deck: gameBoard) {
+                for (Card card: deck) {
+                    card.setAttacked(false);
+                }
             }
         }
     }

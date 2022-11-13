@@ -6,7 +6,7 @@ import fileio.Coordinates;
 public class Minion extends Card {
     Coordinates coordinates;
     String row;
-    boolean isTank;
+    private boolean isTank;
     Ability ability;
 
     public Minion(CardInput input, GameSet gameSet) {
@@ -31,6 +31,11 @@ public class Minion extends Card {
             }
         }
     }
+
+    public boolean isTank() {
+        return isTank;
+    }
+
     void attack(Card card) {
 
     }

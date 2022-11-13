@@ -12,6 +12,7 @@ public class Card {
     private ArrayList<String> colors;
     private String name;
     private boolean frozen;
+    private boolean attacked;
     GameSet gameSet;
 
     public Card(CardInput input, GameSet gameSet) {
@@ -22,6 +23,7 @@ public class Card {
         this.colors = input.getColors();
         this.name = input.getName();
         this.frozen = false;
+        this.attacked = false;
         this.gameSet = gameSet;
     }
 
@@ -61,12 +63,20 @@ public class Card {
         return name;
     }
 
-    public boolean getFrozen() {
+    public boolean isFrozen() {
         return frozen;
     }
 
     public void setFrozen(boolean frozen) {
         this.frozen = frozen;
+    }
+
+    public boolean hasAttacked() {
+        return attacked;
+    }
+
+    public void setAttacked(boolean attacked) {
+        this.attacked = attacked;
     }
 
     @Override
