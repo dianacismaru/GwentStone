@@ -7,6 +7,8 @@ import fileio.StartGameInput;
 
 import java.util.ArrayList;
 
+import static main.Helper.unfreezeCards;
+
 public class GameSet {
     ArrayList<ArrayList<Card>> gameBoard = new ArrayList<>();
     static int gameCount;
@@ -50,6 +52,7 @@ public class GameSet {
     void changePlayerTurn() {
         // mark that the current player has finished his turn
         players[playerTurn - 1].playedHisTurn = true;
+        unfreezeCards(playerTurn - 1, this);
 
         // change to the next player
         if (playerTurn == 1) {

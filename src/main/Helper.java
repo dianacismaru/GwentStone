@@ -55,6 +55,26 @@ public class Helper {
         }
     }
 
+    public static void unfreezeCards(int playerIndex, GameSet gameSet) {
+        ArrayList<Card> frontRow;
+        ArrayList<Card> backRow;
+        if (playerIndex == 0) {
+            frontRow = gameSet.gameBoard.get(2);
+            backRow = gameSet.gameBoard.get(3);
+        } else {
+            frontRow = gameSet.gameBoard.get(1);
+            backRow = gameSet.gameBoard.get(0);
+        }
+
+        for (Card card: frontRow) {
+            card.setFrozen(false);
+        }
+
+        for (Card card: backRow) {
+            card.setFrozen(false);
+        }
+    }
+
     public static boolean enemyHasTank(Player enemy, GameSet gameSet) {
         int frontRow;
         if (enemy.equals(gameSet.players[0])) {
