@@ -143,10 +143,10 @@ public class Helper {
      * @param player        the reference to the owner of the card
      * @return              the target row in which the minion will be placed
      */
-    static ArrayList<Card> getTargetRow(Minion minion, int playerIndex, Player player) {
+    static ArrayList<Card> getTargetRowForMinion(Minion minion, int playerIndex, Player player) {
         int rowIndex;
 
-        if (minion.row.equals("front")) {
+        if (minion.getRow().equals("front")) {
             if (playerIndex == 0) {
                 rowIndex = 2;
             } else {

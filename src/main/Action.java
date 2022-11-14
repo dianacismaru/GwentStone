@@ -66,7 +66,7 @@ public class Action {
             return manageError(this, "Not enough mana to place card on table.", actionNode);
         }
 
-        ArrayList<Card> targetRow = getTargetRow((Minion) card, activePlayerIndex, player);
+        ArrayList<Card> targetRow = getTargetRowForMinion((Minion) card, activePlayerIndex, player);
 
         if (targetRow.size() == 5) {
             return manageError(this, "Cannot place card on table since row is full.", actionNode);

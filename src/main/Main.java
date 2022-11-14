@@ -76,7 +76,7 @@ public final class Main {
             gameSet.startGame(inputData);
 
             //int ct = 1;
-            for (Action action : gameSet.actions) {
+            for (Action action : gameSet.getActions()) {
                 /*System.out.println("\nComanda nr. " + ct++ + " " + action.getCommand());
                 System.out.println("La inceput avem runda " + gameSet.roundCount);
                 System.out.println("Si este tura lui " + gameSet.playerTurn);

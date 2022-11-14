@@ -13,7 +13,7 @@ public class GameSet {
     ArrayList<ArrayList<Card>> gameBoard = new ArrayList<>();
     private int playerTurn;
     Player[] players = new Player[2];
-    ArrayList<Action> actions = new ArrayList<>();
+    private final ArrayList<Action> actions = new ArrayList<>();
     private int roundCount;
     private boolean gameEnd;
     private static int gameCount;
@@ -48,7 +48,7 @@ public class GameSet {
 
     void endPlayerTurn() {
         // mark that the current player has finished his turn
-        players[playerTurn - 1].playedHisTurn = true;
+        players[playerTurn - 1].setPlayedHisTurn(true);
         unfreezeCards(playerTurn - 1, this);
 
         // change to the next player
@@ -60,13 +60,13 @@ public class GameSet {
 
         // check if the other player has also played his turn
         // start a new round
-        if (players[playerTurn - 1].playedHisTurn) {
+        if (players[playerTurn - 1].hasPlayedHisTurn()) {
             if (roundCount < 10)
                 roundCount++;
 
             for (Player player: players) {
                 player.setMana(player.getMana() + roundCount);
-                player.playedHisTurn = false;
+                player.setPlayedHisTurn(false);
                 if (!player.decks.get(player.deckIndex).isEmpty()) {
                     Card firstDeckCard = player.decks.get(player.deckIndex).get(0);
                     player.decks.get(player.deckIndex).remove(0);
@@ -90,6 +90,10 @@ public class GameSet {
 
     public int getPlayerTurn() {
         return playerTurn;
+    }
+
+    public ArrayList<Action> getActions() {
+        return actions;
     }
 
     public static int getGameCount() {
