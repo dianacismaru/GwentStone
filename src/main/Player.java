@@ -10,22 +10,20 @@ import java.util.Random;
 import static main.Helper.canBeEnvironmentCard;
 
 public class Player {
-    Card hero;
-    ArrayList<ArrayList<Card>> decks = new ArrayList<>();;
+    private Hero hero;
+    ArrayList<ArrayList<Card>> decks = new ArrayList<>();
     ArrayList<Card> cardsInHand = new ArrayList<>();
     int deckIndex;
     GameSet gameSet;
     private int mana;
     private boolean playedHisTurn;
-    private int wins;
 
-    public Player(Card hero, DecksInput decksInput, int deckIndex, int shuffleSeed, GameSet gameSet) {
+    public Player(Hero hero, DecksInput decksInput, int deckIndex, int shuffleSeed, GameSet gameSet) {
         this.hero = hero;
         this.hero.setHealth(30);
         this.deckIndex = deckIndex;
         this.gameSet = gameSet;
         this.mana = 1;
-        this.wins = 0;
 
         for (int i = 0; i < decksInput.getNrDecks(); i++) {
             ArrayList<Card> deck = new ArrayList<>();
@@ -44,6 +42,10 @@ public class Player {
         cardsInHand.add(decks.get(deckIndex).remove(0));
     }
 
+    public Hero getHero() {
+        return hero;
+    }
+
     public int getMana() {
         return mana;
     }
@@ -58,13 +60,5 @@ public class Player {
 
     public void setPlayedHisTurn(boolean playedHisTurn) {
         this.playedHisTurn = playedHisTurn;
-    }
-
-    public int getWins() {
-        return wins;
-    }
-
-    public void setWins(int wins) {
-        this.wins = wins;
     }
 }

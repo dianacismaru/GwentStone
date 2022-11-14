@@ -34,24 +34,16 @@ public class Action {
     }
 
     public int operateCommand(ObjectNode actionNode) {
-        switch (command) {
-            case "placeCard":
-                return placeCard(actionNode);
-            case "endPlayerTurn":
-                gameSet.endPlayerTurn();
-                return 0;
-            case "cardUsesAttack":
-                return cardUsesAttack(actionNode);
-            case "cardUsesAbility":
-                return cardUsesAbility(actionNode);
-            case "useAttackHero":
-                return useAttackHero(actionNode);
-            case "useHeroAbility":
-                break;
-            case "useEnvironmentCard":
-                return useEnvironmentCard(actionNode);
-        }
-        return 0;
+        return switch (command) {
+            case "placeCard" -> placeCard(actionNode);
+            case "endPlayerTurn" -> gameSet.endPlayerTurn();
+            case "cardUsesAttack" -> cardUsesAttack(actionNode);
+            case "cardUsesAbility" -> cardUsesAbility(actionNode);
+            case "useAttackHero" -> useAttackHero(actionNode);
+            case "useHeroAbility" -> useHeroAbility(actionNode);
+            case "useEnvironmentCard" -> useEnvironmentCard(actionNode);
+            default -> 0;
+        };
     }
 
     public int placeCard(ObjectNode actionNode) {
@@ -118,8 +110,6 @@ public class Action {
 
         Card attacker = gameSet.getCardByCoordinates(cardAttacker);
         Card opponent = gameSet.getCardByCoordinates(cardAttacked);
-        /*System.out.println("cartea " + attacker.getName() + " cu coord x=" + cardAttacker.getX() + " y=" + cardAttacker.getY());
-        System.out.println("o va ataca pe " + opponent.getName() + " cu coord x=" + cardAttacked.getX() + " y=" + cardAttacked.getY());*/
 
         if (attacker.hasAttacked()) {
             return manageError(this, "Attacker card has already attacked this turn.", actionNode);
@@ -180,7 +170,7 @@ public class Action {
     public int useAttackHero(ObjectNode actionNode) {
         int attackerPlayerIndex = getCardOwnerIndex(cardAttacker, gameSet.players);
         Card attacker = gameSet.getCardByCoordinates(cardAttacker);
-        Card hero = gameSet.players[attackerPlayerIndex ^ 1].hero;
+        Card hero = gameSet.players[attackerPlayerIndex ^ 1].getHero();
 
         if (attacker.isFrozen()) {
             return manageError(this, "Attacker card is frozen.", actionNode);
@@ -197,14 +187,43 @@ public class Action {
         hero.setHealth(hero.getHealth() - attacker.getAttackDamage());
         if (hero.getHealth() <= 0) {
             gameSet.setGameEnd(true);
-            Player winner = gameSet.players[attackerPlayerIndex];
-            winner.setWins(winner.getWins() + 1);
             if (attackerPlayerIndex == 0) {
+                GameSet.setPlayerOneWins(GameSet.getPlayerOneWins() + 1);
                 return manageError(this, "Player one killed the enemy hero.", actionNode);
             }
+            GameSet.setPlayerTwoWins(GameSet.getPlayerTwoWins() + 1);
             return manageError(this, "Player two killed the enemy hero.", actionNode);
         }
         attacker.setAttacked(true);
+        return 0;
+    }
+
+    public int useHeroAbility(ObjectNode actionNode) {
+        int activePlayerIndex = gameSet.getPlayerTurn() - 1;
+        Player player = gameSet.players[activePlayerIndex];
+        Hero hero = player.getHero();
+
+        if (player.getMana() < hero.getMana()) {
+            return manageError(this, "Not enough mana to use hero's ability.", actionNode);
+        }
+
+        if (hero.hasAttacked()) {
+            return manageError(this, "Hero has already attacked this turn.", actionNode);
+        }
+
+        boolean enemyRow = isEnemyRow(affectedRow, activePlayerIndex);
+
+        if ((hero.getName().equals("Lord Royce") || hero.getName().equals("Empress Thorina")) && !enemyRow) {
+            return manageError(this, "Selected row does not belong to the enemy.", actionNode);
+        }
+
+        if ((hero.getName().equals("General Kocioraw") || hero.getName().equals("King Mudface")) && enemyRow) {
+            return manageError(this, "Selected row does not belong to the current player.", actionNode);
+        }
+
+        player.setMana(player.getMana() - hero.getMana());
+        hero.useAbility(affectedRow);
+        hero.setAttacked(true);
         return 0;
     }
 
@@ -221,6 +240,9 @@ public class Action {
             case "getPlayerMana" -> getPlayerMana(actionNode);
             case "getEnvironmentCardsInHand" -> getEnvironmentCardsInHand(actionNode);
             case "getFrozenCardsOnTable" -> getFrozenCardsOnTable(actionNode);
+            case "getTotalGamesPlayed" -> actionNode.put("output", GameSet.getGameCount());
+            case "getPlayerOneWins" -> actionNode.put("output", GameSet.getPlayerOneWins());
+            case "getPlayerTwoWins" -> actionNode.put("output", GameSet.getPlayerTwoWins());
         }
     }
 
@@ -284,7 +306,7 @@ public class Action {
 
     private void getPlayerHero(ObjectNode actionNode) {
         actionNode.put("playerIdx", playerIdx);
-        Card hero = gameSet.players[playerIdx - 1].hero;
+        Card hero = gameSet.players[playerIdx - 1].getHero();
         actionNode.put("output", createHeroNode(hero));
     }
 
