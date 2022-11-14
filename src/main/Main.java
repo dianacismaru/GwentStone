@@ -69,14 +69,14 @@ public final class Main {
                 Input.class);
 
         ArrayNode output = objectMapper.createArrayNode();
-        GameSet.gameCount = 0;
+        GameSet.setGameCount(0);
 
-        while (GameSet.gameCount < inputData.getGames().size()) {
+        while (GameSet.getGameCount() < inputData.getGames().size()) {
             GameSet gameSet = new GameSet();
             gameSet.startGame(inputData);
 
             //int ct = 1;
-            for (Action action : gameSet.actions) {
+            for (Action action : gameSet.getActions()) {
                 /*System.out.println("\nComanda nr. " + ct++ + " " + action.getCommand());
                 System.out.println("La inceput avem runda " + gameSet.roundCount);
                 System.out.println("Si este tura lui " + gameSet.playerTurn);
@@ -89,8 +89,13 @@ public final class Main {
                 if (action.getCommand().startsWith("get")) {
                     action.debugCommand(actionNode);
                     output.add(actionNode);
-                } else if (action.operateCommand(actionNode) == 1) {
-                    output.add(actionNode);
+                } else {
+                    if (action.operateCommand(actionNode) == 1) {
+                        output.add(actionNode);
+                    }
+/*                    if (action.gameSet.gameEnded()) {
+                        break;
+                    }*/
                 }
 /*                System.out.println("Urmeaza tura lui " + gameSet.playerTurn);
                 System.out.println("La final avem runda " + gameSet.roundCount);*/

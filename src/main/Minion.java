@@ -4,8 +4,7 @@ import fileio.CardInput;
 import fileio.Coordinates;
 
 public class Minion extends Card {
-    Coordinates coordinates;
-    String row;
+    private String row;
     private boolean tank;
 
     public Minion(CardInput input, GameSet gameSet) {
@@ -32,7 +31,6 @@ public class Minion extends Card {
     }
 
     public void useAbility(Card attacker, Card targetCard) {
-//        System.out.println("\nam apelat abilitate intre " + attacker.getName() + " si " + targetCard.getName());
         switch (this.getName()) {
             case "The Ripper" -> weakKnees(targetCard);
             case "Miraj" -> skyJack(attacker, targetCard);
@@ -42,7 +40,6 @@ public class Minion extends Card {
     }
 
     private void weakKnees(Card targetCard) {
-        // System.out.println("target card avea damage " + targetCard.getAttackDamage());
         if (targetCard.getAttackDamage() < 2) {
             targetCard.setAttackDamage(0);
         } else {
@@ -57,13 +54,17 @@ public class Minion extends Card {
     }
 
     private void shapeShift(Card targetCard) {
-        int tmp = targetCard.getHealth();
+        int tmpHealth = targetCard.getHealth();
         targetCard.setHealth(targetCard.getAttackDamage());
-        targetCard.setAttackDamage(tmp);
+        targetCard.setAttackDamage(tmpHealth);
     }
 
     private void godsPlan(Card targetCard) {
         targetCard.setHealth(targetCard.getHealth() + 2);
+    }
+
+    public String getRow() {
+        return row;
     }
 
     public boolean isTank() {
