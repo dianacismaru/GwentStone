@@ -41,9 +41,9 @@ public class Action {
                 gameSet.changePlayerTurn();
                 return 0;
             case "cardUsesAttack":
-                break;
+                return cardUsesAttack(actionNode);
             case "cardUsesAbility":
-                break;
+                return cardUsesAbility(actionNode);
             case "useAttackHero":
                 break;
             case "useHeroAbility":
@@ -104,48 +104,92 @@ public class Action {
         environmentCard.useAbility(affectedRow);
         player.setMana(player.getMana() - environmentCard.getMana());
         player.cardsInHand.remove(environmentCard);
+
+        return 0;
+    }
+
+    private int cardUsesAttack(ObjectNode actionNode) {
+        Player attackerOwner = getCardOwner(cardAttacker, gameSet.players);
+        Player attackedOwner = getCardOwner(cardAttacked, gameSet.players);
+
+        if (attackerOwner.equals(attackedOwner)) {
+            return manageError(this, "Attacked card does not belong to the enemy.", actionNode);
+        }
+
+        Card attacker = gameSet.getCardByCoordinates(cardAttacker);
+        Card opponent = gameSet.getCardByCoordinates(cardAttacked);
+        /*System.out.println("cartea " + attacker.getName() + " cu coord x=" + cardAttacker.getX() + " y=" + cardAttacker.getY());
+        System.out.println("o va ataca pe " + opponent.getName() + " cu coord x=" + cardAttacked.getX() + " y=" + cardAttacked.getY());*/
+
+        if (attacker.hasAttacked()) {
+            return manageError(this, "Attacker card has already attacked this turn.", actionNode);
+        }
+
+        if (attacker.isFrozen()) {
+            return manageError(this, "Attacker card is frozen.", actionNode);
+        }
+
+        if (enemyHasTank(attackedOwner, gameSet) && !((Minion) opponent).isTank()) {
+            return manageError(this, "Attacked card is not of type 'Tank'.", actionNode);
+        }
+
+        opponent.setHealth(opponent.getHealth() - attacker.getAttackDamage());
+        if (opponent.getHealth() <= 0) {
+            removeCardFromTable(gameSet, opponent);
+        }
+        attacker.setAttacked(true);
+        return 0;
+    }
+
+    private int cardUsesAbility(ObjectNode actionNode) {
+        Player attackerOwner = getCardOwner(cardAttacker, gameSet.players);
+        Player attackedOwner = getCardOwner(cardAttacked, gameSet.players);
+
+        Card attacker = gameSet.getCardByCoordinates(cardAttacker);
+        Card opponent = gameSet.getCardByCoordinates(cardAttacked);
+
+        if (attacker.hasAttacked()) {
+            return manageError(this, "Attacker card has already attacked this turn.", actionNode);
+        }
+
+        if (attacker.getName().equals("Disciple") && !attackerOwner.equals(attackedOwner)) {
+            return manageError(this, "Attacked card does not belong to the current player.", actionNode);
+        }
+
+        if (!attacker.getName().equals("Disciple") && attackerOwner.equals(attackedOwner)) {
+            return manageError(this, "Attacked card does not belong to the enemy.", actionNode);
+        }
+
+        if (enemyHasTank(attackedOwner, gameSet) && !((Minion) opponent).isTank()) {
+            return manageError(this, "Attacked card is not of type 'Tank'.", actionNode);
+        }
+
+        if (attacker.isFrozen()) {
+            return manageError(this, "Attacker card is frozen.", actionNode);
+        }
+
+        ((Minion) attacker).useAbility(attacker, opponent);
+        attacker.setAttacked(true);
+
+        if (opponent.getHealth() <= 0) {
+            removeCardFromTable(gameSet, opponent);
+        }
         return 0;
     }
 
     public void debugCommand(ObjectNode actionNode) {
         actionNode.put("command", command);
 
-        switch(command) {
-            case "getCardsInHand":
-                getCardsInHand(actionNode);
-                break;
-
-            case "getPlayerDeck":
-                getPlayerDeck(actionNode);
-                break;
-
-            case "getCardsOnTable":
-                getCardsOnTable(actionNode);
-                break;
-
-            case "getPlayerTurn":
-                actionNode.put("output", gameSet.playerTurn);
-                break;
-
-            case "getPlayerHero":
-                getPlayerHero(actionNode);
-                break;
-
-            case "getCardAtPosition":
-                getCardAtPosition(actionNode);
-                break;
-
-            case "getPlayerMana":
-                getPlayerMana(actionNode);
-                break;
-
-            case "getEnvironmentCardsInHand":
-                getEnvironmentCardsInHand(actionNode);
-                break;
-
-            case "getFrozenCardsOnTable":
-                getFrozenCardsOnTable(actionNode);
-                break;
+        switch (command) {
+            case "getCardsInHand" -> getCardsInHand(actionNode);
+            case "getPlayerDeck" -> getPlayerDeck(actionNode);
+            case "getCardsOnTable" -> getCardsOnTable(actionNode);
+            case "getPlayerTurn" -> actionNode.put("output", gameSet.playerTurn);
+            case "getPlayerHero" -> getPlayerHero(actionNode);
+            case "getCardAtPosition" -> getCardAtPosition(actionNode);
+            case "getPlayerMana" -> getPlayerMana(actionNode);
+            case "getEnvironmentCardsInHand" -> getEnvironmentCardsInHand(actionNode);
+            case "getFrozenCardsOnTable" -> getFrozenCardsOnTable(actionNode);
         }
     }
 
@@ -185,13 +229,12 @@ public class Action {
         ArrayList<ArrayList<Card>> gameBoard = gameSet.gameBoard;
         for (ArrayList<Card> row : gameBoard) {
             for (Card card : row) {
-                if (card.getFrozen())
+                if (card.isFrozen())
                     outputArrayNode.add(createCardNode(card));
             }
         }
         actionNode.put("output", outputArrayNode);
     }
-
 
     private void getPlayerDeck(ObjectNode actionNode) {
         actionNode.put("playerIdx", playerIdx);
@@ -220,10 +263,10 @@ public class Action {
         actionNode.put("x", x);
         actionNode.put("y", y);
 
-        if (!gameBoard.isEmpty() && !gameBoard.get(x).isEmpty()) {
+        if (!gameBoard.isEmpty() && gameBoard.get(x).size() > y) {
             actionNode.put("output", createCardNode(gameBoard.get(x).get(y)));
         } else {
-            actionNode.put("error", "No card at that position.");
+            actionNode.put("output", "No card available at that position.");
         }
     }
 
@@ -248,11 +291,6 @@ public class Action {
         actionNode.put("output", outputArrayNode);
     }
 
-    private void cardUsesAttack(ObjectNode actionNode) {
-       /* Card attacker = gameSet.getCardByCoordinates(cardAttacker);
-        Card opponent = gameSet.getCardByCoordinates(cardAttacked);*/
-    }
-
     public String getCommand() {
         return command;
     }
@@ -263,5 +301,21 @@ public class Action {
 
     public int getAffectedRow() {
         return affectedRow;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public Coordinates getCardAttacker() {
+        return cardAttacker;
+    }
+
+    public Coordinates getCardAttacked() {
+        return cardAttacked;
     }
 }
