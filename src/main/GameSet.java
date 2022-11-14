@@ -11,13 +11,12 @@ import static main.Helper.unfreezeCards;
 
 public class GameSet {
     ArrayList<ArrayList<Card>> gameBoard = new ArrayList<>();
-    static int gameCount;
-    int startingPlayer;
-    int shuffleSeed;
-    int playerTurn;
+    private int playerTurn;
     Player[] players = new Player[2];
     ArrayList<Action> actions = new ArrayList<>();
-    int roundCount;
+    private int roundCount;
+    private boolean gameEnd;
+    private static int gameCount;
 
     public GameSet() {
         gameCount++;
@@ -31,9 +30,7 @@ public class GameSet {
             gameBoard.add(new ArrayList<>(5));
         }
 
-        this.startingPlayer = input.getStartingPlayer();
-        this.playerTurn = startingPlayer;
-        this.shuffleSeed = input.getShuffleSeed();
+        this.playerTurn = input.getStartingPlayer();
 
         ArrayList<ActionsInput> actionsInputs = inputData.getGames().get(0).getActions();
         for (ActionsInput actionsInput: actionsInputs) {
@@ -43,13 +40,13 @@ public class GameSet {
 
         this.players[0] = new Player(new Card(input.getPlayerOneHero(), this),
                 inputData.getPlayerOneDecks(), input.getPlayerOneDeckIdx(),
-                shuffleSeed, this);
+                input.getShuffleSeed(), this);
         this.players[1] = new Player(new Card(input.getPlayerTwoHero(), this),
                 inputData.getPlayerTwoDecks(), input.getPlayerTwoDeckIdx(),
-                shuffleSeed, this);
+                input.getShuffleSeed(), this);
     }
 
-    void changePlayerTurn() {
+    void endPlayerTurn() {
         // mark that the current player has finished his turn
         players[playerTurn - 1].playedHisTurn = true;
         unfreezeCards(playerTurn - 1, this);
@@ -70,9 +67,11 @@ public class GameSet {
             for (Player player: players) {
                 player.setMana(player.getMana() + roundCount);
                 player.playedHisTurn = false;
-                Card firstDeckCard = player.decks.get(player.deckIndex).get(0);
-                player.decks.get(player.deckIndex).remove(0);
-                player.cardsInHand.add(firstDeckCard);
+                if (!player.decks.get(player.deckIndex).isEmpty()) {
+                    Card firstDeckCard = player.decks.get(player.deckIndex).get(0);
+                    player.decks.get(player.deckIndex).remove(0);
+                    player.cardsInHand.add(firstDeckCard);
+                }
             }
 
             for (ArrayList<Card> deck: gameBoard) {
@@ -87,5 +86,25 @@ public class GameSet {
         int x = coordinates.getX();
         int y = coordinates.getY();
         return gameBoard.get(x).get(y);
+    }
+
+    public int getPlayerTurn() {
+        return playerTurn;
+    }
+
+    public static int getGameCount() {
+        return gameCount;
+    }
+
+    public static void setGameCount(int gameCount) {
+        GameSet.gameCount = gameCount;
+    }
+
+    public boolean gameEnded() {
+        return gameEnd;
+    }
+
+    public void setGameEnd(boolean gameEnd) {
+        this.gameEnd = gameEnd;
     }
 }

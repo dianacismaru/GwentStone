@@ -19,6 +19,7 @@ public class Player {
     GameSet gameSet;
     private int mana;
     boolean playedHisTurn;
+    private int wins;
 
     public Player(Card hero, DecksInput decksInput, int deckIndex, int shuffleSeed, GameSet gameSet) {
         this.hero = hero;
@@ -31,6 +32,7 @@ public class Player {
         this.gameSet = gameSet;
         this.mana = 1;
         this.playedHisTurn = false;
+        this.wins = 0;
 
         for (int i = 0; i < nrDecks; i++) {
             ArrayList<Card> deck = new ArrayList<>();
@@ -55,5 +57,13 @@ public class Player {
 
     public void setMana(int mana) {
         this.mana = mana;
+    }
+
+    public int getWins() {
+        return wins;
+    }
+
+    public void setWins(int wins) {
+        this.wins = wins;
     }
 }

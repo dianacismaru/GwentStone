@@ -20,6 +20,7 @@ public class Helper {
      */
     public static int manageError(Action action, String errorMessage, ObjectNode actionNode) {
         actionNode.put("command", action.getCommand());
+        ObjectMapper objectMapper = new ObjectMapper();
 
         switch (action.getCommand()) {
             case "placeCard" -> actionNode.put("handIdx", action.getHandIdx());
@@ -28,7 +29,6 @@ public class Helper {
                 actionNode.put("affectedRow", action.getAffectedRow());
             }
             case "cardUsesAttack", "cardUsesAbility" -> {
-                ObjectMapper objectMapper = new ObjectMapper();
                 ObjectNode attackerNode = objectMapper.createObjectNode();
                 attackerNode.put("x", action.getCardAttacker().getX());
                 attackerNode.put("y", action.getCardAttacker().getY());
@@ -37,6 +37,17 @@ public class Helper {
                 attackedNode.put("x", action.getCardAttacked().getX());
                 attackedNode.put("y", action.getCardAttacked().getY());
                 actionNode.put("cardAttacked", attackedNode);
+            }
+            case "useAttackHero" -> {
+                if (action.gameSet.gameEnded()) {
+                    actionNode.remove("command");
+                    actionNode.put("gameEnded", errorMessage);
+                    return 1;
+                }
+                ObjectNode attackerNode = objectMapper.createObjectNode();
+                attackerNode.put("x", action.getCardAttacker().getX());
+                attackerNode.put("y", action.getCardAttacker().getY());
+                actionNode.put("cardAttacker", attackerNode);
             }
         }
 
@@ -112,10 +123,10 @@ public class Helper {
         return gameSet.gameBoard.get(targetRow);
     }
 
-    public static Player getCardOwner(Coordinates coordinates, Player[] players) {
+    public static int getCardOwnerIndex(Coordinates coordinates, Player[] players) {
         if (coordinates.getX() == 0 || coordinates.getX() == 1)
-            return players[1];
-        return players[0];
+            return 1;
+        return 0;
     }
 
     public static boolean isEnemyRow(int affectedRow, int activePlayerIndex) {
