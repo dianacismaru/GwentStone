@@ -5,25 +5,23 @@ import fileio.CardInput;
 import java.util.ArrayList;
 
 public class Card {
-    private int mana;
+    private final int mana;
     private int attackDamage;
     private int health;
-    private String description;
-    private ArrayList<String> colors;
-    private String name;
+    private final String description;
+    private final ArrayList<String> colors;
+    private final String name;
     private boolean frozen;
     private boolean attacked;
-    GameSet gameSet;
+    private final GameSet gameSet;
 
-    public Card(CardInput input, GameSet gameSet) {
+    public Card(final CardInput input, final GameSet gameSet) {
         this.mana = input.getMana();
         this.attackDamage = input.getAttackDamage();
         this.health = input.getHealth();
         this.description = input.getDescription();
         this.colors = input.getColors();
         this.name = input.getName();
-        this.frozen = false;
-        this.attacked = false;
         this.gameSet = gameSet;
     }
 
@@ -35,7 +33,7 @@ public class Card {
         return attackDamage;
     }
 
-    public void setAttackDamage(int attackDamage) {
+    public void setAttackDamage(final int attackDamage) {
         this.attackDamage = attackDamage;
     }
 
@@ -43,7 +41,7 @@ public class Card {
         return health;
     }
 
-    public void setHealth(int health) {
+    public void setHealth(final int health) {
         this.health = health;
     }
 
@@ -63,7 +61,7 @@ public class Card {
         return frozen;
     }
 
-    public void setFrozen(boolean frozen) {
+    public void setFrozen(final boolean frozen) {
         this.frozen = frozen;
     }
 
@@ -71,28 +69,11 @@ public class Card {
         return attacked;
     }
 
-    public void setAttacked(boolean attacked) {
+    public void setAttacked(final boolean attacked) {
         this.attacked = attacked;
     }
 
-    @Override
-    public String toString() {
-        return "CardInput{"
-                +  "mana="
-                + mana
-                +  ", attackDamage="
-                + attackDamage
-                + ", health="
-                + health
-                +  ", description='"
-                + description
-                + '\''
-                + ", colors="
-                + colors
-                + ", name='"
-                +  ""
-                + name
-                + '\''
-                + '}' + '\n';
+    public GameSet getGameSet() {
+        return gameSet;
     }
 }

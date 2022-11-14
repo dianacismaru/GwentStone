@@ -7,20 +7,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
-import static main.Helper.canBeEnvironmentCard;
+import static main.Helper.hasEnvironmentCardName;
 
-public class Player {
-    private Hero hero;
-    ArrayList<ArrayList<Card>> decks = new ArrayList<>();
-    ArrayList<Card> cardsInHand = new ArrayList<>();
-    int deckIndex;
-    GameSet gameSet;
+public final class Player {
+    private final int deckIndex;
+    private final Hero hero;
     private int mana;
+    private final ArrayList<ArrayList<Card>> decks = new ArrayList<>();
+    private final ArrayList<Card> cardsInHand = new ArrayList<>();
+    private final GameSet gameSet;
     private boolean playedHisTurn;
 
-    public Player(Hero hero, DecksInput decksInput, int deckIndex, int shuffleSeed, GameSet gameSet) {
+    public Player(final Hero hero, final DecksInput decksInput, final int deckIndex,
+                  final int shuffleSeed, final GameSet gameSet) {
         this.hero = hero;
-        this.hero.setHealth(30);
         this.deckIndex = deckIndex;
         this.gameSet = gameSet;
         this.mana = 1;
@@ -29,7 +29,7 @@ public class Player {
             ArrayList<Card> deck = new ArrayList<>();
             for (int j = 0; j < decksInput.getNrCardsInDeck(); j++) {
                 CardInput cardInput = decksInput.getDecks().get(i).get(j);
-                if (canBeEnvironmentCard(cardInput)) {
+                if (hasEnvironmentCardName(cardInput)) {
                     deck.add(new Environment(cardInput, gameSet));
                 } else {
                     deck.add(new Minion(cardInput, gameSet));
@@ -42,6 +42,10 @@ public class Player {
         cardsInHand.add(decks.get(deckIndex).remove(0));
     }
 
+    public int getDeckIndex() {
+        return deckIndex;
+    }
+
     public Hero getHero() {
         return hero;
     }
@@ -50,15 +54,27 @@ public class Player {
         return mana;
     }
 
-    public void setMana(int mana) {
+    public void setMana(final int mana) {
         this.mana = mana;
+    }
+
+    public ArrayList<ArrayList<Card>> getDecks() {
+        return decks;
+    }
+
+    public ArrayList<Card> getCardsInHand() {
+        return cardsInHand;
     }
 
     public boolean hasPlayedHisTurn() {
         return playedHisTurn;
     }
 
-    public void setPlayedHisTurn(boolean playedHisTurn) {
+    public GameSet getGameSet() {
+        return gameSet;
+    }
+
+    public void setPlayedHisTurn(final boolean playedHisTurn) {
         this.playedHisTurn = playedHisTurn;
     }
 }

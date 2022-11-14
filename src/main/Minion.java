@@ -1,13 +1,12 @@
 package main;
 
 import fileio.CardInput;
-import fileio.Coordinates;
 
-public class Minion extends Card {
+public final class Minion extends Card {
     private String row;
     private boolean tank;
 
-    public Minion(CardInput input, GameSet gameSet) {
+    public Minion(final CardInput input, final GameSet gameSet) {
         super(input, gameSet);
         this.setProperties();
     }
@@ -27,19 +26,21 @@ public class Minion extends Card {
                 row = "front";
                 tank = false;
             }
+            default -> System.err.println("Invalid Minion name.");
         }
     }
 
-    public void useAbility(Card attacker, Card targetCard) {
+    public void useAbility(final Card attacker, final Card targetCard) {
         switch (this.getName()) {
             case "The Ripper" -> weakKnees(targetCard);
             case "Miraj" -> skyJack(attacker, targetCard);
             case "The Cursed One" -> shapeShift(targetCard);
             case "Disciple" -> godsPlan(targetCard);
+            default -> System.err.println("Invalid Minion name.");
         }
     }
 
-    private void weakKnees(Card targetCard) {
+    private void weakKnees(final Card targetCard) {
         if (targetCard.getAttackDamage() < 2) {
             targetCard.setAttackDamage(0);
         } else {
@@ -47,19 +48,19 @@ public class Minion extends Card {
         }
     }
 
-    private void skyJack(Card attacker, Card targetCard) {
+    private void skyJack(final Card attacker, final Card targetCard) {
         int tmpHealth = attacker.getHealth();
         attacker.setHealth(targetCard.getHealth());
         targetCard.setHealth(tmpHealth);
     }
 
-    private void shapeShift(Card targetCard) {
+    private void shapeShift(final Card targetCard) {
         int tmpHealth = targetCard.getHealth();
         targetCard.setHealth(targetCard.getAttackDamage());
         targetCard.setAttackDamage(tmpHealth);
     }
 
-    private void godsPlan(Card targetCard) {
+    private void godsPlan(final Card targetCard) {
         targetCard.setHealth(targetCard.getHealth() + 2);
     }
 
