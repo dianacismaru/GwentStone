@@ -49,6 +49,9 @@ public class Helper {
                 attackerNode.put("y", action.getCardAttacker().getY());
                 actionNode.put("cardAttacker", attackerNode);
             }
+            case "useHeroAbility" -> {
+                actionNode.put("affectedRow", action.getAffectedRow());
+            }
         }
 
         actionNode.put("error", errorMessage);
@@ -111,6 +114,17 @@ public class Helper {
             }
         }
         return cardWithMaxHealth;
+    }
+
+    public static Card getCardWithMaxDamage(ArrayList<Card> cardsList) {
+        Card cardWithMaxDamage = cardsList.get(0);
+
+        for (Card card: cardsList) {
+            if (card.getAttackDamage() > cardWithMaxDamage.getAttackDamage()) {
+                cardWithMaxDamage = card;
+            }
+        }
+        return cardWithMaxDamage;
     }
 
     public static ArrayList<Card> getMirroredRow(int affectedRow, GameSet gameSet) {

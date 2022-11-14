@@ -70,6 +70,8 @@ public final class Main {
 
         ArrayNode output = objectMapper.createArrayNode();
         GameSet.setGameCount(0);
+        GameSet.setPlayerOneWins(0);
+        GameSet.setPlayerTwoWins(0);
 
         while (GameSet.getGameCount() < inputData.getGames().size()) {
             GameSet gameSet = new GameSet();
@@ -93,9 +95,6 @@ public final class Main {
                     if (action.operateCommand(actionNode) == 1) {
                         output.add(actionNode);
                     }
-/*                    if (action.gameSet.gameEnded()) {
-                        break;
-                    }*/
                 }
 /*                System.out.println("Urmeaza tura lui " + gameSet.playerTurn);
                 System.out.println("La final avem runda " + gameSet.roundCount);*/
