@@ -1,6 +1,7 @@
-package main;
+package cards;
 
 import fileio.CardInput;
+import main.GameSet;
 
 public final class Minion extends Card {
     private String row;
@@ -11,6 +12,9 @@ public final class Minion extends Card {
         this.setProperties();
     }
 
+    /**
+     * Set the proprieties that each type of minion has
+     */
     public void setProperties() {
         String name = this.getName();
         switch (name) {
@@ -30,6 +34,11 @@ public final class Minion extends Card {
         }
     }
 
+    /**
+     * Use the minion card's ability
+     * @param attacker      the card that will use the ability
+     * @param targetCard    the card that will be targeted
+     */
     public void useAbility(final Card attacker, final Card targetCard) {
         switch (this.getName()) {
             case "The Ripper" -> weakKnees(targetCard);

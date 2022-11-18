@@ -85,7 +85,7 @@ public final class Main {
                     action.debugCommand();
                     output.add(actionNode);
                 } else {
-                    if (action.operateCommand() == 1) {
+                    if (action.gameCommand() == 1) {
                         output.add(actionNode);
                     }
                 }

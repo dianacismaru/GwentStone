@@ -1,17 +1,22 @@
-package main;
+package cards;
 
 import fileio.CardInput;
+import main.GameSet;
 
 import java.util.ArrayList;
 
+import static main.GameSet.MAX_GAMEBOARD_HEIGHT;
 import static main.Helper.getCardWithMaxHealth;
-import static main.Helper.getMirroredRow;
 
 public final class Environment extends Card {
     public Environment(final CardInput input, final GameSet gameSet) {
         super(input, gameSet);
     }
 
+    /**
+     * Use the environment card's ability
+     * @param affectedRow   the index of the row that will be targeted
+     */
     public void useAbility(final int affectedRow) {
         switch (getName()) {
             case "Winterfell" -> useWinterfell(affectedRow);
@@ -41,8 +46,9 @@ public final class Environment extends Card {
     }
 
     private void useHeartHound(final int affectedRow) {
+        int mirroredRowIndex = MAX_GAMEBOARD_HEIGHT - 1 - affectedRow;
+        ArrayList<Card> mirroredRow = getGameSet().getGameBoard().get(mirroredRowIndex);
         ArrayList<Card> affectedRowList = getGameSet().getGameBoard().get(affectedRow);
-        ArrayList<Card> mirroredRow = getMirroredRow(affectedRow, getGameSet());
 
         Card cardWithMaxHealth = getCardWithMaxHealth(affectedRowList);
 

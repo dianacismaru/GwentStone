@@ -1,5 +1,9 @@
 package main;
 
+import cards.Card;
+import cards.Environment;
+import cards.Hero;
+import cards.Minion;
 import fileio.CardInput;
 import fileio.DecksInput;
 
@@ -66,6 +70,10 @@ public final class Player {
         return cardsInHand;
     }
 
+    /**
+     * @return  true if the current player has already played his turn,
+     *          false otherwise
+     */
     public boolean hasPlayedHisTurn() {
         return playedHisTurn;
     }

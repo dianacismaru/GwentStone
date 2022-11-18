@@ -1,6 +1,7 @@
-package main;
+package cards;
 
 import fileio.CardInput;
+import main.GameSet;
 
 import java.util.ArrayList;
 
@@ -15,6 +16,10 @@ public final class Hero extends Card {
         this.setHealth(HERO_HEALTH);
     }
 
+    /**
+     * Use the hero's ability
+     * @param affectedRow   the index of the row that will be targeted
+     */
     public void useAbility(final int affectedRow) {
         ArrayList<Card> affectedRowList = getGameSet().getGameBoard().get(affectedRow);
         switch (this.getName()) {

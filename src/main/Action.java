@@ -1,5 +1,9 @@
 package main;
 
+import cards.Card;
+import cards.Environment;
+import cards.Hero;
+import cards.Minion;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -8,16 +12,16 @@ import fileio.Coordinates;
 
 import java.util.ArrayList;
 
+import static main.GameSet.MAX_GAMEBOARD_HEIGHT;
 import static main.GameSet.MAX_GAMEBOARD_WIDTH;
 import static main.Helper.manageError;
 import static main.Helper.hasEnvironmentCardName;
 import static main.Helper.createCardNode;
 import static main.Helper.enemyHasTank;
 import static main.Helper.getCardByCoordinates;
-import static main.Helper.getMirroredRow;
 import static main.Helper.getTargetRowForMinion;
 import static main.Helper.isEnemyRow;
-import static main.Helper.removeCardFromTable;
+import static main.Helper.removeDeadCards;
 import static main.Helper.createHeroNode;
 import static main.Helper.getCardOwnerIndex;
 
@@ -46,7 +50,12 @@ public final class Action {
         this.y = actionsInput.getY();
     }
 
-    public int operateCommand() {
+    /**
+     * Operate a game command
+     * @return  0 if the command has been successfully executed,
+     *          1 if an error occurred
+     */
+    public int gameCommand() {
         return switch (command) {
             case "placeCard" -> placeCard();
             case "endPlayerTurn" -> gameSet.endPlayerTurn();
@@ -59,6 +68,9 @@ public final class Action {
         };
     }
 
+    /**
+     * Operate a debug command
+     */
     public void debugCommand() {
         actionNode.put("command", command);
 
@@ -79,6 +91,11 @@ public final class Action {
         }
     }
 
+    /**
+     * Place a card from the current player's hand on the game board
+     * @return  0 if the card has been successfully placed on the game board,
+     *          1 if an error occurred
+     */
     public int placeCard() {
         int activePlayerIndex = gameSet.getPlayerTurn() - 1;
         Player player = gameSet.getPlayers()[activePlayerIndex];
@@ -103,6 +120,11 @@ public final class Action {
         return 0;
     }
 
+    /**
+     * Use a minion's attack over an opponent minion
+     * @return  0 if the minion's attack has been successfully executed,
+     *          1 if an error occurred
+     */
     private int cardUsesAttack() {
         int attackerPlayerIndex = getCardOwnerIndex(cardAttacker);
         int attackedPlayerIndex = getCardOwnerIndex(cardAttacked);
@@ -129,13 +151,17 @@ public final class Action {
         }
 
         opponent.setHealth(opponent.getHealth() - attacker.getAttackDamage());
-        if (opponent.getHealth() <= 0) {
-            removeCardFromTable(gameSet, opponent);
-        }
+        removeDeadCards(gameSet);
         attacker.setAttacked(true);
+
         return 0;
     }
 
+    /**
+     * Use a minion's ability over another minion
+     * @return  0 if the minion's ability has been successfully executed,
+     *          1 if an error occurred
+     */
     private int cardUsesAbility() {
         int attackerPlayerIndex = getCardOwnerIndex(cardAttacker);
         int attackedPlayerIndex = getCardOwnerIndex(cardAttacked);
@@ -168,12 +194,16 @@ public final class Action {
         ((Minion) attacker).useAbility(attacker, opponent);
         attacker.setAttacked(true);
 
-        if (opponent.getHealth() <= 0) {
-            removeCardFromTable(gameSet, opponent);
-        }
+        removeDeadCards(gameSet);
+
         return 0;
     }
 
+    /**
+     * Use a minion's attack over the opponent's hero
+     * @return  0 if the minion's attack has been successfully executed,
+     *          1 if an error occurred
+     */
     public int useAttackHero() {
         int attackerPlayerIndex = getCardOwnerIndex(cardAttacker);
         Card attacker = getCardByCoordinates(cardAttacker, gameSet);
@@ -205,6 +235,11 @@ public final class Action {
         return 0;
     }
 
+    /**
+     * Use the current player's hero ability
+     * @return  0 if the hero's ability has been successfully executed,
+     *          1 if an error occurred
+     */
     public int useHeroAbility() {
         int activePlayerIndex = gameSet.getPlayerTurn() - 1;
         Player player = gameSet.getPlayers()[activePlayerIndex];
@@ -237,6 +272,11 @@ public final class Action {
         return 0;
     }
 
+    /**
+     * Use the current player's first environment card in hand
+     * @return  0 if the environment card's ability has been successfully executed,
+     *          1 if an error occurred
+     */
     public int useEnvironmentCard() {
         int activePlayerIndex = gameSet.getPlayerTurn() - 1;
         Player player = gameSet.getPlayers()[activePlayerIndex];
@@ -255,11 +295,13 @@ public final class Action {
         }
 
         if (card.getName().equals("Heart Hound")) {
-            if (getMirroredRow(affectedRow, gameSet).size() == MAX_GAMEBOARD_WIDTH) {
+            int mirroredRowIndex = MAX_GAMEBOARD_HEIGHT - 1 - affectedRow;
+            if (getGameSet().getGameBoard().get(mirroredRowIndex).size() == MAX_GAMEBOARD_WIDTH) {
                 return manageError(this, "Cannot steal enemy card since the player's row is full.",
                         actionNode);
             }
         }
+
         Environment environmentCard = (Environment) card;
         environmentCard.useAbility(affectedRow);
         player.setMana(player.getMana() - environmentCard.getMana());

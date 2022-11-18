@@ -1,5 +1,8 @@
 package main;
 
+import cards.Card;
+import cards.Environment;
+import cards.Minion;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -65,10 +68,14 @@ public final class Helper {
         return 1;
     }
 
-    public static void removeCardFromTable(final GameSet gameSet, final Card deadCard) {
+    /**
+     * Remove all the dead cards from the game board
+     * @param gameSet   the current game
+     */
+    public static void removeDeadCards(final GameSet gameSet) {
         for (ArrayList<Card> row: gameSet.getGameBoard()) {
             for (Card card: row) {
-                if (card.equals(deadCard)) {
+                if (card.getHealth() <= 0) {
                     row.remove(card);
                     return;
                 }
@@ -76,6 +83,11 @@ public final class Helper {
         }
     }
 
+    /**
+     * Unfreeze the cards on the table for a player
+     * @param playerIndex   the index of the player
+     * @param gameSet       the current game
+     */
     public static void unfreezeCards(final int playerIndex, final GameSet gameSet) {
         ArrayList<Card> frontRow = gameSet.getGameBoard().get(getRowIndex("front", playerIndex));
         ArrayList<Card> backRow = gameSet.getGameBoard().get(getRowIndex("back", playerIndex));
@@ -89,6 +101,11 @@ public final class Helper {
         }
     }
 
+    /**
+     * @param row           the wanted row
+     * @param playerIndex   the index of the player
+     * @return              the index of the front or the back row for the specified player
+     */
     public static int getRowIndex(final String row, final int playerIndex) {
         if (row.equals("front")) {
             if (playerIndex == 0) {
@@ -105,6 +122,13 @@ public final class Helper {
         }
     }
 
+    /**
+     * Check if the enemy has a tank card on his side of the board
+     * @param enemy     the opponent player
+     * @param gameSet   the current game
+     * @return          true if the enemy has a tank card on his side,
+     *                  false otherwise
+     */
     public static boolean enemyHasTank(final Player enemy, final GameSet gameSet) {
         int frontRow;
         if (enemy.equals(gameSet.getPlayers()[0])) {
@@ -121,6 +145,10 @@ public final class Helper {
         return false;
     }
 
+    /**
+     * @param cardsList     the list of cards that will be checked
+     * @return              the card with the maximum health from the list
+     */
     public static Card getCardWithMaxHealth(final ArrayList<Card> cardsList) {
         Card cardWithMaxHealth = cardsList.get(0);
 
@@ -132,6 +160,10 @@ public final class Helper {
         return cardWithMaxHealth;
     }
 
+    /**
+     * @param cardsList     the list of cards that will be checked
+     * @return              the card with the maximum attack damage from the list
+     */
     public static Card getCardWithMaxDamage(final ArrayList<Card> cardsList) {
         Card cardWithMaxDamage = cardsList.get(0);
 
@@ -143,23 +175,21 @@ public final class Helper {
         return cardWithMaxDamage;
     }
 
+    /**
+     * @param coordinates   the coordinates that indicate the card
+     * @param gameSet       the current game
+     * @return              the card at the specified coordinates on the game board
+     */
     public static Card getCardByCoordinates(final Coordinates coordinates, final GameSet gameSet) {
         int x = coordinates.getX();
         int y = coordinates.getY();
         return gameSet.getGameBoard().get(x).get(y);
     }
 
-    public static ArrayList<Card> getMirroredRow(final int affectedRow, final GameSet gameSet) {
-        int targetRow = switch (affectedRow) {
-            case PLAYER_TWO_BACK_ROW -> PLAYER_ONE_BACK_ROW;
-            case PLAYER_TWO_FRONT_ROW -> PLAYER_ONE_FRONT_ROW;
-            case PLAYER_ONE_FRONT_ROW -> PLAYER_TWO_FRONT_ROW;
-            case PLAYER_ONE_BACK_ROW -> PLAYER_TWO_BACK_ROW;
-            default -> -1;
-        };
-        return gameSet.getGameBoard().get(targetRow);
-    }
-
+    /**
+     * @param coordinates   the coordinates of a card
+     * @return              the index of the player that owns the card
+     */
     public static int getCardOwnerIndex(final Coordinates coordinates) {
         if (coordinates.getX() == 0 || coordinates.getX() == 1) {
             return 1;
@@ -167,12 +197,19 @@ public final class Helper {
         return 0;
     }
 
-    public static boolean isEnemyRow(final int affectedRow, final int activePlayerIndex) {
-        if (activePlayerIndex == 0 && (affectedRow == PLAYER_TWO_BACK_ROW
+    /**
+     * Check if a specified row belongs to the enemy
+     * @param affectedRow       the index of the row to be checked
+     * @param currentPlayerIndex the index of the current player
+     * @return                  true if the row belongs to the enemy,
+     *                          false otherwise
+     */
+    public static boolean isEnemyRow(final int affectedRow, final int currentPlayerIndex) {
+        if (currentPlayerIndex == 0 && (affectedRow == PLAYER_TWO_BACK_ROW
                 || affectedRow == PLAYER_TWO_FRONT_ROW)) {
             return true;
         }
-        return activePlayerIndex == 1 && (affectedRow == PLAYER_ONE_FRONT_ROW
+        return currentPlayerIndex == 1 && (affectedRow == PLAYER_ONE_FRONT_ROW
                 || affectedRow == PLAYER_ONE_BACK_ROW);
     }
 
@@ -180,7 +217,7 @@ public final class Helper {
      * Get the target row in the board game for a Minion card
      * @param minion        the Minion card that will be placed on the board
      * @param playerIndex   the index of the player
-     * @param player        the reference to the owner of the card
+     * @param player        the owner of the card
      * @return              the target row in which the minion will be placed
      */
     static ArrayList<Card> getTargetRowForMinion(final Minion minion, final int playerIndex,

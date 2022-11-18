@@ -1,5 +1,7 @@
 package main;
 
+import cards.Card;
+import cards.Hero;
 import fileio.ActionsInput;
 import fileio.GameInput;
 import fileio.Input;
@@ -32,6 +34,10 @@ public final class GameSet {
         this.roundCount = 1;
     }
 
+    /**
+     * Start a new GwentStone game
+     * @param inputData the parsed JSON input for the new game
+     */
     public void startGame(final Input inputData) {
         StartGameInput input = inputData.getGames().get(gameCount - 1).getStartGame();
 
@@ -55,6 +61,10 @@ public final class GameSet {
                 input.getShuffleSeed(), this);
     }
 
+    /**
+     *  End the current player turn.
+     *  If both of the players have finished their turns, start a new round
+     */
     public int endPlayerTurn() {
         players[playerTurn - 1].setPlayedHisTurn(true);
         unfreezeCards(playerTurn - 1, this);
@@ -107,6 +117,10 @@ public final class GameSet {
         return actions;
     }
 
+    /**
+     * @return  true if the game has ended,
+     *          false otherwise
+     */
     public boolean gameEnded() {
         return gameEnd;
     }
