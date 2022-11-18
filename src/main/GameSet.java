@@ -1,7 +1,9 @@
 package main;
 
+import cards.Card;
+import cards.Hero;
 import fileio.ActionsInput;
-import fileio.Coordinates;
+import fileio.GameInput;
 import fileio.Input;
 import fileio.StartGameInput;
 
@@ -9,33 +11,44 @@ import java.util.ArrayList;
 
 import static main.Helper.unfreezeCards;
 
-public class GameSet {
-    ArrayList<ArrayList<Card>> gameBoard = new ArrayList<>();
+public final class GameSet {
+    private final ArrayList<ArrayList<Card>> gameBoard = new ArrayList<>();
     private int playerTurn;
-    Player[] players = new Player[2];
+    private final Player[] players = new Player[2];
     private final ArrayList<Action> actions = new ArrayList<>();
     private int roundCount;
     private boolean gameEnd;
     private static int gameCount;
     private static int playerOneWins;
     private static int playerTwoWins;
+    public static final int MAX_GAMEBOARD_WIDTH = 5;
+    public static final int MAX_GAMEBOARD_HEIGHT = 4;
+    public static final int PLAYER_ONE_FRONT_ROW = 2;
+    public static final int PLAYER_ONE_BACK_ROW = 3;
+    public static final int PLAYER_TWO_FRONT_ROW = 1;
+    public static final int PLAYER_TWO_BACK_ROW = 0;
+    public static final int MAXIMUM_MANA_PER_ROUND = 10;
 
     public GameSet() {
         gameCount++;
         this.roundCount = 1;
     }
 
-    public void startGame(Input inputData) {
+    /**
+     * Start a new GwentStone game
+     * @param inputData the parsed JSON input for the new game
+     */
+    public void startGame(final Input inputData) {
         StartGameInput input = inputData.getGames().get(gameCount - 1).getStartGame();
 
-        for (int i = 0; i < 4; i++) {
-            gameBoard.add(new ArrayList<>(5));
+        for (int i = 0; i < MAX_GAMEBOARD_HEIGHT; i++) {
+            gameBoard.add(new ArrayList<>(MAX_GAMEBOARD_WIDTH));
         }
 
         this.playerTurn = input.getStartingPlayer();
 
-        ArrayList<ActionsInput> actionsInputs = inputData.getGames().get(gameCount - 1).getActions();
-        for (ActionsInput actionsInput: actionsInputs) {
+        GameInput gameInput = inputData.getGames().get(gameCount - 1);
+        for (ActionsInput actionsInput: gameInput.getActions()) {
             Action action = new Action(this, actionsInput);
             actions.add(action);
         }
@@ -48,32 +61,34 @@ public class GameSet {
                 input.getShuffleSeed(), this);
     }
 
-    int endPlayerTurn() {
-        // mark that the current player has finished his turn
+    /**
+     *  End the current player turn.
+     *  If both of the players have finished their turns, start a new round
+     */
+    public int endPlayerTurn() {
         players[playerTurn - 1].setPlayedHisTurn(true);
         unfreezeCards(playerTurn - 1, this);
 
-        // change to the next player
         if (playerTurn == 1) {
             playerTurn = 2;
         } else {
             playerTurn = 1;
         }
 
-        // check if the other player has also played his turn
-        // start a new round
+        // Start a new round
         if (players[playerTurn - 1].hasPlayedHisTurn()) {
-            if (roundCount < 10)
+            if (roundCount < MAXIMUM_MANA_PER_ROUND) {
                 roundCount++;
+            }
 
             for (Player player: players) {
                 player.setMana(player.getMana() + roundCount);
                 player.setPlayedHisTurn(false);
                 player.getHero().setAttacked(false);
-                if (!player.decks.get(player.deckIndex).isEmpty()) {
-                    Card firstDeckCard = player.decks.get(player.deckIndex).get(0);
-                    player.decks.get(player.deckIndex).remove(0);
-                    player.cardsInHand.add(firstDeckCard);
+                if (!player.getDecks().get(player.getDeckIndex()).isEmpty()) {
+                    Card firstDeckCard = player.getDecks().get(player.getDeckIndex()).get(0);
+                    player.getDecks().get(player.getDeckIndex()).remove(0);
+                    player.getCardsInHand().add(firstDeckCard);
                 }
             }
 
@@ -86,41 +101,47 @@ public class GameSet {
         return 0;
     }
 
-    public Card getCardByCoordinates(Coordinates coordinates) {
-        int x = coordinates.getX();
-        int y = coordinates.getY();
-        return gameBoard.get(x).get(y);
+    public ArrayList<ArrayList<Card>> getGameBoard() {
+        return gameBoard;
     }
 
     public int getPlayerTurn() {
         return playerTurn;
     }
 
+    public Player[] getPlayers() {
+        return players;
+    }
+
     public ArrayList<Action> getActions() {
         return actions;
+    }
+
+    /**
+     * @return  true if the game has ended,
+     *          false otherwise
+     */
+    public boolean gameEnded() {
+        return gameEnd;
+    }
+
+    public void setGameEnd(final boolean gameEnd) {
+        this.gameEnd = gameEnd;
     }
 
     public static int getGameCount() {
         return gameCount;
     }
 
-    public static void setGameCount(int gameCount) {
+    public static void setGameCount(final int gameCount) {
         GameSet.gameCount = gameCount;
-    }
-
-    public boolean gameEnded() {
-        return gameEnd;
-    }
-
-    public void setGameEnd(boolean gameEnd) {
-        this.gameEnd = gameEnd;
     }
 
     public static int getPlayerOneWins() {
         return playerOneWins;
     }
 
-    public static void setPlayerOneWins(int playerOneWins) {
+    public static void setPlayerOneWins(final int playerOneWins) {
         GameSet.playerOneWins = playerOneWins;
     }
 
@@ -128,7 +149,7 @@ public class GameSet {
         return playerTwoWins;
     }
 
-    public static void setPlayerTwoWins(int playerTwoWins) {
+    public static void setPlayerTwoWins(final int playerTwoWins) {
         GameSet.playerTwoWins = playerTwoWins;
     }
 }

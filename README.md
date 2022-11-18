@@ -1,44 +1,36 @@
+*Copyright (C) 2022 Cismaru Diana-Iuliana (321CA - 2022/2023)*
+
+# GwentStone - OOP Homework
+
+### Description of the project:
+This project implements the GwentStone card game. It can be played between two
+persons, on a 4x5 board game. Each player has a few card decks and a hero card.
+
+### The Gameplay:
+
+During the game, the AI requests **debugging commands** that are individually
+implemented in the *Action* class. \
+The cards in the game are represented by several types that extend the base
+class:
+
+* **Heroes**:
+    * legendary cards that can use their ability on an entire row of the
+      table;
+    * The game ends when one of the heroes dies;
+
+* **Minions**:
+    * normal cards that can be placed on the table and can attack other
+      cards, including the opponent's hero;
+    * some of the minions have special abilities that the player can also use
+      either on opponent's cards, in order to kill them, or on his own cards, in
+      order to get bonus health;
+
+* **Environment**:
+    * cards that can be used only once per game and can not be placed on the
+      table;
+    * their special abilities can be used on an entire row of the board game
 
 
-# Tema POO  - GwentStone
 
-<div align="center"><img src="https://tenor.com/view/witcher3-gif-9340436.gif" width="500px"></div>
-
-#### Assignment Link: [https://ocw.cs.pub.ro/courses/poo-ca-cd/teme/tema](https://ocw.cs.pub.ro/courses/poo-ca-cd/teme/tema)
-
-
-## Skel Structure
-
-* src/
-  * checker/ - checker files
-  * fileio/ - contains classes used to read data from the json files
-  * main/
-      * Main - the Main class runs the checker on your implementation. Add the entry point to your implementation in it. Run Main to test your implementation from the IDE or from command line.
-      * Test - run the main method from Test class with the name of the input file from the command line and the result will be written
-        to the out.txt file. Thus, you can compare this result with ref.
-* input/ - contains the tests in JSON format
-* ref/ - contains all reference output for the tests in JSON format
-
-## Tests
-
-1. test01_game_start - 3p
-2. test02_place_card - 4p
-3. test03_place_card_invalid - 4p
-4. test04_use_env_card - 4p
-5. test05_use_env_card_invalid - 4p
-6. test06_attack_card - 4p
-7. test07_attack_card_invalid - 4p
-8. test08_use_card_ability - 4p
-9. test09_use_card_ability_invalid -4p
-10. test10_attack_hero - 4p
-11. test11_attack_hero_invalid - 4p
-12. test12_use_hero_ability_1 - 4p
-13. test13_use_hero_ability_2 - 4p
-14. test14_use_hero_ability_invalid_1 - 4p
-15. test15_use_hero_ability_invalid_2 - 4p
-16. test16_multiple_games_valid - 5p
-17. test17_multiple_games_invalid - 6p
-18. test18_big_game - 10p
-
-
-<div align="center"><img src="https://tenor.com/view/homework-time-gif-24854817.gif" width="500px"></div>
+### Resources:
+* [Object Mapper Tutorial](https://www.baeldung.com/jackson-object-mapper-tutorial)

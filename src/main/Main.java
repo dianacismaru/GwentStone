@@ -77,27 +77,18 @@ public final class Main {
             GameSet gameSet = new GameSet();
             gameSet.startGame(inputData);
 
-            //int ct = 1;
             for (Action action : gameSet.getActions()) {
-                /*System.out.println("\nComanda nr. " + ct++ + " " + action.getCommand());
-                System.out.println("La inceput avem runda " + gameSet.roundCount);
-                System.out.println("Si este tura lui " + gameSet.playerTurn);
-
-                for (int i = 1; i <= 2; i++) {
-                    System.out.println("Player " + i + " are mana = " + gameSet.players[i-1].getMana());
-
-                }*/
                 ObjectNode actionNode = objectMapper.createObjectNode();
+                action.setActionNode(actionNode);
+
                 if (action.getCommand().startsWith("get")) {
-                    action.debugCommand(actionNode);
+                    action.debugCommand();
                     output.add(actionNode);
                 } else {
-                    if (action.operateCommand(actionNode) == 1) {
+                    if (action.gameCommand() == 1) {
                         output.add(actionNode);
                     }
                 }
-/*                System.out.println("Urmeaza tura lui " + gameSet.playerTurn);
-                System.out.println("La final avem runda " + gameSet.roundCount);*/
             }
         }
 
