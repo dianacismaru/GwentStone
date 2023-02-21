@@ -1,6 +1,6 @@
 Copyright (C) 2022 Cismaru Diana-Iuliana (321CA - 2022/2023)
 
-# GwentStone - OOP Homework
+# GwentStone
 
 ### Description of the project:
 This project implements the GwentStone card game. It can be played between two
